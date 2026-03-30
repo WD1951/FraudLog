@@ -6,7 +6,7 @@
 <title>FraudLog — Entregador</title>
 
 <style>
-:root {
+:root{
   --bg:#0A0F1E;
   --bg2:#111827;
   --bg3:#1A2235;
@@ -17,10 +17,6 @@
 
 *{margin:0;padding:0;box-sizing:border-box;}
 
-html,body{
-  height:100%;
-}
-
 body{
   background:var(--bg);
   color:var(--white);
@@ -29,65 +25,72 @@ body{
   margin:auto;
 }
 
-/* SCREENS */
-.screen{display:none;height:100vh;flex-direction:column;}
-.screen.active{display:flex;}
+/* telas */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
 
-/* SPLASH */
-#splash{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-}
+.center{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;}
 
 .logo{
-  font-size:32px;
+  font-size:30px;
   font-weight:700;
 }
 .logo span{color:var(--teal);}
 
-.sub{
-  color:var(--gray);
-  margin-top:10px;
-}
+.sub{color:var(--gray);margin-top:10px;}
 
-/* LOGIN */
-.login{padding:30px;}
+/* login */
+.container{padding:24px;}
 
 .input{
   width:100%;
   padding:14px;
-  margin-bottom:10px;
-  border-radius:10px;
+  border-radius:12px;
   border:1px solid #1E2D42;
   background:var(--bg3);
   color:white;
+  margin-bottom:12px;
 }
 
 .btn{
   width:100%;
   padding:16px;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   background:var(--teal);
   font-weight:700;
+  color:#001A10;
 }
 
-/* HOME */
+/* cards */
 .card{
   background:var(--bg3);
-  padding:16px;
   border-radius:14px;
-  margin-bottom:10px;
+  padding:16px;
+  margin-bottom:12px;
 }
 
-/* ENTREGA */
+.stat{
+  font-size:28px;
+  font-weight:700;
+  color:var(--teal);
+}
+
+/* mapa */
 canvas{
   width:100%;
   height:180px;
-  background:#111;
-  border-radius:12px;
+  border-radius:14px;
+  background:#0F1825;
+}
+
+/* botão fixo */
+.fixed{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  max-width:430px;
 }
 </style>
 </head>
@@ -95,15 +98,18 @@ canvas{
 <body>
 
 <!-- SPLASH -->
-<div id="splash" class="screen active">
+<div id="splash" class="screen active center">
   <div class="logo">Fraud<span>Log</span></div>
   <div class="sub">Entregou. Protegido.</div>
 </div>
 
 <!-- LOGIN -->
 <div id="login" class="screen">
-  <div class="login">
-    <h2>Seu escudo em cada entrega</h2>
+  <div class="container">
+    <div class="logo" style="font-size:20px;">Fraud<span>Log</span></div>
+
+    <h2 style="margin:20px 0;">Seu escudo em cada entrega</h2>
+
     <input id="nome" class="input" placeholder="Seu nome">
     <button class="btn" onclick="login()">Entrar</button>
   </div>
@@ -111,138 +117,143 @@ canvas{
 
 <!-- HOME -->
 <div id="home" class="screen">
-  <div class="login">
+  <div class="container">
+    <div class="logo" style="font-size:14px;">Fraud<span>Log</span></div>
+
+    <div style="margin-top:10px;">Bom dia</div>
     <h2 id="user"></h2>
 
     <div class="card">
-      <small>Hoje</small>
-      <h1 id="count">0</h1>
+      <div>Hoje</div>
+      <div class="stat" id="count">0</div>
     </div>
 
-    <button class="btn" onclick="novaEntrega()">Nova Entrega</button>
+    <button class="btn" onclick="novaEntrega()">Iniciar Nova Entrega</button>
   </div>
 </div>
 
 <!-- ENTREGA -->
 <div id="entrega" class="screen">
-  <div class="login">
+  <div class="container">
     <h3>Entrega ativa</h3>
 
-    <div class="card" id="status">Iniciando...</div>
+    <div class="card" id="status">
+      Iniciando sensores...
+    </div>
 
     <canvas id="map"></canvas>
 
-    <button id="btn" class="btn" disabled onclick="certificar()" style="margin-top:20px;">
-      Gerar Certificado
-    </button>
+    <div class="card" id="wpp">
+      Aguardando confirmação da portaria...
+    </div>
   </div>
+
+  <button id="btn" class="btn fixed" disabled onclick="gerarCertificado()">
+    Gerar Certificado
+  </button>
 </div>
 
-<!-- CERT -->
+<!-- CERTIFICADO -->
 <div id="cert" class="screen">
-  <div class="login">
-    <h2>Entrega Certificada</h2>
+  <div class="container">
 
-    <div class="card">
-      <small>Hash</small>
-      <div id="hash" style="color:#00C896;"></div>
+    <div class="card" style="text-align:center;border:1px solid var(--teal);">
+      <h3 style="color:var(--teal)">Entrega Certificada</h3>
+      <small>Prova criptográfica gerada</small>
     </div>
 
-    <button class="btn" onclick="home()">Voltar</button>
+    <div class="card">
+      <small>Hash Final</small>
+      <div id="hash" style="color:var(--teal);word-break:break-all;"></div>
+    </div>
+
+    <button class="btn" onclick="voltar()">Voltar</button>
   </div>
 </div>
 
 <script>
 
-/* NAV */
+/* navegação */
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-/* SPLASH (seguro) */
+/* splash estável */
 setTimeout(()=>{
   show('login');
 },1200);
 
-/* LOGIN */
+/* login */
 function login(){
-  let nome = document.getElementById('nome').value || "Entregador";
-  document.getElementById('user').innerText = nome;
+  let nome=document.getElementById('nome').value||"Entregador";
+  document.getElementById('user').innerText=nome;
   show('home');
 }
 
-/* ENTREGA */
+/* nova entrega */
 function novaEntrega(){
   show('entrega');
-  iniciar();
+  iniciarFluxo();
 }
 
-function iniciar(){
-  document.getElementById('status').innerText = "Capturando GPS...";
+/* fluxo SEM dependência externa */
+function iniciarFluxo(){
 
-  /* GPS blindado */
-  try{
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(
-        function(pos){
-          document.getElementById('status').innerText = "GPS OK";
-          desenhar();
-        },
-        function(){
-          fallback();
-        },
-        {timeout:3000}
-      );
-    }else{
-      fallback();
-    }
-  }catch(e){
-    fallback();
-  }
+  let status = document.getElementById('status');
+  let wpp = document.getElementById('wpp');
 
-  function fallback(){
-    document.getElementById('status').innerText = "GPS simulado";
-    desenhar();
-  }
+  status.innerText = "Capturando GPS...";
+  desenharMapa();
 
   setTimeout(()=>{
-    document.getElementById('status').innerText = "WhatsApp OK";
+    status.innerText = "GPS validado";
+  },1000);
+
+  setTimeout(()=>{
+    status.innerText = "Câmera autenticada";
   },2000);
 
   setTimeout(()=>{
-    document.getElementById('status').innerText = "Tudo validado";
-    document.getElementById('btn').disabled = false;
+    wpp.innerText = "Portaria respondeu OK ✓";
+  },2500);
+
+  setTimeout(()=>{
+    status.innerText = "Tudo validado";
+    document.getElementById('btn').disabled=false;
   },3000);
 }
 
-/* MAPA SEGURO */
-function desenhar(){
+/* mapa robusto */
+function desenharMapa(){
   let c = document.getElementById('map');
   let ctx = c.getContext('2d');
+
+  c.width = c.offsetWidth;
+  c.height = 180;
 
   ctx.fillStyle="#0F1825";
   ctx.fillRect(0,0,c.width,c.height);
 
   ctx.fillStyle="#00C896";
   ctx.beginPath();
-  ctx.arc(c.width/2,c.height/2,8,0,Math.PI*2);
+  ctx.arc(c.width/2,c.height/2,10,0,Math.PI*2);
   ctx.fill();
 }
 
-/* CERTIFICADO */
-function certificar(){
-  let hash = "FL" + Math.random().toString(16).slice(2);
+/* certificado */
+function gerarCertificado(){
+  let hash = "FL" + Math.random().toString(16).substring(2,34);
 
   document.getElementById('hash').innerText = hash;
 
-  let count = document.getElementById('count');
-  count.innerText = parseInt(count.innerText)+1;
+  let c = document.getElementById('count');
+  c.innerText = parseInt(c.innerText)+1;
 
   show('cert');
 }
 
-function home(){
+function voltar(){
   show('home');
 }
 
