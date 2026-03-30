@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FraudLock Delivery — Certificação</title>
+<title>FraudLock Delivery</title>
 
 <style>
 body {
-  background: linear-gradient(180deg,#020617,#0f172a);
-  color:#fff;
+  background:#f8fafc;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   margin:0;
   padding:16px;
+  color:#0f172a;
 }
 
 .container { max-width:420px; margin:auto; }
@@ -20,15 +20,15 @@ body {
   text-align:center;
   margin-bottom:20px;
 }
-.header h1 { color:#60a5fa; margin:0; }
-.header p { color:#94a3b8; font-size:0.9rem; }
+.header h1 { color:#2563eb; margin:0; }
+.header p { color:#64748b; font-size:0.9rem; }
 
 .card {
-  background:#1e293b;
-  padding:16px;
-  border-radius:14px;
+  background:white;
+  padding:18px;
+  border-radius:16px;
   margin-bottom:14px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
 input {
@@ -37,9 +37,7 @@ input {
   margin-top:6px;
   margin-bottom:14px;
   border-radius:10px;
-  border:1px solid #334155;
-  background:#020617;
-  color:#fff;
+  border:1px solid #e2e8f0;
 }
 
 button {
@@ -52,10 +50,9 @@ button {
   cursor:pointer;
 }
 
-.primary { background:#2563eb; }
-.success { background:#059669; }
-.danger { background:#dc2626; }
-.gray { background:#475569; }
+.primary { background:#2563eb; color:white; }
+.success { background:#10b981; color:white; }
+.gray { background:#e2e8f0; }
 
 .hidden { display:none; }
 
@@ -63,19 +60,8 @@ button {
   display:flex;
   justify-content:space-between;
   padding:8px 0;
-  border-bottom:1px solid #334155;
+  border-bottom:1px solid #e2e8f0;
   font-size:0.9rem;
-}
-
-.hash {
-  font-family:monospace;
-  font-size:0.75rem;
-  word-break:break-all;
-  background:#020617;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #334155;
-  color:#60a5fa;
 }
 
 .status {
@@ -83,13 +69,42 @@ button {
   font-weight:bold;
 }
 
-.loader {
+.hash {
+  font-family:monospace;
+  font-size:0.75rem;
+  word-break:break-all;
+  background:#f1f5f9;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+}
+
+.whatsapp {
+  background:#e5ddd5;
+  border-radius:16px;
+  padding:12px;
+}
+
+.msg {
+  background:white;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+  font-size:0.9rem;
+}
+
+.confirm-btn {
+  background:#25d366;
+  color:white;
   text-align:center;
-  padding:20px;
+  padding:12px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
 .qr {
-  background:#fff;
+  background:#0f172a;
   height:120px;
   border-radius:8px;
   margin:10px auto;
@@ -104,50 +119,61 @@ button {
 
 <div class="header">
 <h1>🛡️ FraudLock</h1>
-<p>Certificação antifraude de entregas</p>
+<p>Validação antifraude de entregas</p>
 </div>
 
 <!-- LOGIN -->
 <div id="login">
 <div class="card">
-<label>CPF</label>
-<input id="cpf">
-
-<label>Celular</label>
-<input id="celular">
-
-<button class="primary" onclick="login()">Entrar com Sessão Segura</button>
+<input id="cpf" placeholder="CPF">
+<button class="primary" onclick="login()">Entrar</button>
 </div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="hidden">
 <div class="card">
-<div class="info"><span>Status</span><span class="status">Proteção Ativa</span></div>
+<div class="info"><span>Status</span><span class="status">Sessão Segura</span></div>
+<div class="info"><span>Cooperativa</span><span>CoopLog Brasil</span></div>
 <div class="info"><span>Entregador</span><span id="nome"></span></div>
 </div>
 
 <button class="success" onclick="novaEntrega()">🚀 Iniciar Entrega</button>
-<button class="danger" onclick="logout()">Sair</button>
 </div>
 
 <!-- ENTREGA -->
 <div id="entrega" class="hidden">
 <div class="card">
 <div class="info"><span>Pedido</span><span id="pedido"></span></div>
-<div class="info"><span>Local</span><span id="gps"></span></div>
+<div class="info"><span>Destino</span><span>Rua Exemplo, 123</span></div>
 <div class="info"><span>Hora</span><span id="hora"></span></div>
 </div>
 
-<button class="primary" onclick="validar()">🛡️ Validar Entrega</button>
-<button class="gray" onclick="voltar()">Voltar</button>
+<button class="primary" onclick="simularWhats()">📲 Notificar via WhatsApp</button>
+</div>
+
+<!-- WHATSAPP -->
+<div id="whatsapp" class="hidden">
+<div class="card whatsapp">
+
+<div class="msg">
+📦 Entrega disponível para confirmação<br><br>
+Pedido: <b id="w-pedido"></b><br>
+Cooperativa: CoopLog Brasil
+</div>
+
+<div class="confirm-btn" onclick="confirmar()">
+Confirmar recebimento
+</div>
+
+</div>
 </div>
 
 <!-- PROCESSANDO -->
 <div id="processando" class="hidden">
-<div class="card loader">
-<h3>Validando integridade...</h3>
-<p>Gerando evidência criptográfica</p>
+<div class="card" style="text-align:center">
+<h3>Validando evento...</h3>
+<p>Gerando certificado antifraude</p>
 </div>
 </div>
 
@@ -155,10 +181,12 @@ button {
 <div id="certificado" class="hidden">
 
 <div class="card">
-<h3 style="text-align:center;">Entrega Certificada</h3>
+<h3 style="text-align:center">Entrega Validada</h3>
 
 <div class="info"><span>Pedido</span><span id="c-pedido"></span></div>
-<div class="info"><span>GPS</span><span id="c-gps"></span></div>
+<div class="info"><span>Cooperativa</span><span>CoopLog Brasil</span></div>
+<div class="info"><span>Entregador</span><span id="c-entregador"></span></div>
+<div class="info"><span>Recebedor</span><span>Confirmado via WhatsApp</span></div>
 <div class="info"><span>Hora</span><span id="c-hora"></span></div>
 <div class="info"><span>Status</span><span class="status">Auditável</span></div>
 
@@ -169,7 +197,6 @@ button {
 <div class="hash" id="hash"></div>
 </div>
 
-<button class="primary" onclick="copiar()">📤 Compartilhar</button>
 <button class="success" onclick="novaEntrega()">Nova Entrega</button>
 
 </div>
@@ -187,41 +214,38 @@ document.getElementById(id).classList.remove('hidden')
 
 function login(){
 let cpf = document.getElementById('cpf').value
-if(cpf.length<3){ alert("CPF inválido"); return }
-
 document.getElementById('nome').innerText = "ID-"+cpf.slice(0,3)
 mostrar('dashboard')
 }
 
 function novaEntrega(){
 entrega = {
-pedido: "FL-"+Math.floor(Math.random()*90000),
-gps: gerarGPS(),
-hora: new Date().toLocaleTimeString()
+pedido:"FL-"+Math.floor(Math.random()*90000),
+hora:new Date().toLocaleTimeString()
 }
 
 document.getElementById('pedido').innerText = entrega.pedido
-document.getElementById('gps').innerText = entrega.gps
 document.getElementById('hora').innerText = entrega.hora
 
 mostrar('entrega')
 }
 
-function validar(){
-mostrar('processando')
+function simularWhats(){
+document.getElementById('w-pedido').innerText = entrega.pedido
+mostrar('whatsapp')
+}
 
-setTimeout(()=>{
-gerarCertificado()
-},2000)
+function confirmar(){
+mostrar('processando')
+setTimeout(()=>gerarCertificado(),2000)
 }
 
 function gerarCertificado(){
-
 let hash = gerarHash()
 
 document.getElementById('c-pedido').innerText = entrega.pedido
-document.getElementById('c-gps').innerText = entrega.gps
 document.getElementById('c-hora').innerText = entrega.hora
+document.getElementById('c-entregador').innerText = document.getElementById('nome').innerText
 document.getElementById('hash').innerText = hash
 
 mostrar('certificado')
@@ -233,21 +257,6 @@ let h='FLX-'
 for(let i=0;i<40;i++) h+=chars[Math.floor(Math.random()*chars.length)]
 return h
 }
-
-function gerarGPS(){
-let lat = (-23.55 - Math.random()/100).toFixed(5)
-let lng = (-46.63 - Math.random()/100).toFixed(5)
-return lat+", "+lng
-}
-
-function copiar(){
-let txt = document.getElementById('hash').innerText
-navigator.clipboard.writeText(txt)
-alert("Certificado copiado")
-}
-
-function voltar(){ mostrar('dashboard') }
-function logout(){ mostrar('login') }
 
 </script>
 
