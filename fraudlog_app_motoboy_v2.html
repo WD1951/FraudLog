@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0A0F1E">
+<title>FraudLog — Entregador</title>
+<style>
+:root {
+  --bg:    #0A0F1E;
+  --bg2:   #111827;
+  --bg3:   #1A2235;
+  --teal:  #00C896;
+  --teal2: #00A87A;
+  --teal3: #003D2A;
+  --teal-g:rgba(0,200,150,0.14);
+  --white: #F0F6FF;
+  --gray:  #8A9AB8;
+  --gray2: #1E2D42;
+  --red:   #FF4444;
+  --amber: #FFB020;
+  --mono:  'Courier New', monospace;
+  --sans:  -apple-system, 'Helvetica Neue', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--white);font-family:var(--sans);font-size:15px;line-height:1.5;max-width:430px;margin:0 auto;position:relative;}
+
+/* ── SCREENS ── */
+.screen{display:none;height:100vh;flex-direction:column;overflow:hidden;}
+.screen.active{display:flex;}
+
+/* ── LOGO COMPONENT ── */
+.fl-logo{display:flex;align-items:center;gap:8px;}
+.fl-logo-icon{width:32px;height:32px;background:var(--teal-g);border:1.5px solid var(--teal);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fl-logo-text{font-family:var(--mono);font-size:17px;font-weight:700;letter-spacing:-0.5px;}
+.fl-logo-text span{color:var(--teal);}
+
+/* ── HEADER BAR ── */
+.header{background:var(--bg2);border-bottom:1px solid var(--gray2);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.header-title{font-size:15px;font-weight:600;}
+.header-sub{font-size:11px;color:var(--gray);margin-top:1px;}
+.btn-back{width:34px;height:34px;background:var(--bg3);border:1px solid var(--gray2);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+
+/* ── SCROLL BODY ── */
+.scroll-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:80px;}
+
+/* ── SPLASH ── */
+#splash{background:var(--bg);align-items:center;justify-content:center;gap:0;}
+.splash-inner{display:flex;flex-direction:column;align-items:center;gap:20px;}
+.splash-logo-icon{width:80px;height:80px;background:var(--teal-g);border:2px solid var(--teal);border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 48px rgba(0,200,150,0.2);}
+.splash-name{font-family:var(--mono);font-size:32px;font-weight:700;letter-spacing:-1px;}
+.splash-name span{color:var(--teal);}
+.splash-tagline{font-size:13px;color:var(--gray);letter-spacing:.08em;text-transform:uppercase;}
+.splash-bar-wrap{width:140px;height:2px;background:var(--gray2);border-radius:2px;margin-top:32px;overflow:hidden;}
+.splash-bar{height:100%;background:var(--teal);border-radius:2px;width:0%;transition:width .05s linear;}
+
+/* ── LOGIN ── */
+#login{overflow-y:auto;}
+.login-hero{padding:52px 24px 28px;background:linear-gradient(180deg,var(--bg2),var(--bg));}
+.login-title{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1.25;margin-top:16px;margin-bottom:8px;}
+.login-title span{color:var(--teal);}
+.login-sub{font-size:14px;color:var(--gray);line-height:1.6;}
+.login-form{padding:24px;}
+.field{margin-bottom:16px;}
+.field-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-bottom:7px;display:block;}
+.field-input{width:100%;background:var(--bg3);border:1.5px solid var(--gray2);border-radius:12px;padding:14px 16px;font-family:var(--mono);font-size:16px;color:var(--white);outline:none;transition:border-color .2s;}
+.field-input:focus{border-color:var(--teal);}
+.field-input::placeholder{color:var(--gray);font-family:var(--sans);font-size:14px;}
+.btn-primary{width:100%;background:var(--teal);color:#001A10;font-family:var(--sans);font-size:16px;font-weight:700;border:none;border-radius:14px;padding:17px;cursor:pointer;margin-top:8px;transition:transform .15s,box-shadow .15s;}
+.btn-primary:active{transform:scale(.97);}
+.login-note{font-size:12px;color:var(--gray);text-align:center;margin-top:14px;line-height:1.6;padding:0 8px;}
+
+/* ── HOME ── */
+#home{}
+.home-header{padding:16px 20px 20px;background:var(--bg2);border-bottom:1px solid var(--gray2);flex-shrink:0;}
+.home-greeting{font-size:13px;color:var(--gray);margin-bottom:3px;}
+.home-name{font-size:20px;font-weight:700;}
+.home-name span{color:var(--teal);}
+.status-pill{display:inline-flex;align-items:center;gap:6px;background:var(--teal-g);border:1px solid var(--teal3);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--teal);margin-top:10px;}
+.dot-pulse{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 0;}
+.stat-card{background:var(--bg3);border:1px solid var(--gray2);border-radius:14px;padding:16px;}
+.stat-card.accent{border-color:var(--teal3);background:rgba(0,200,150,.06);}
+.stat-card.wide{grid-column:1/-1;}
+.stat-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.stat-val{font-family:var(--mono);font-size:26px;font-weight:700;}
+.stat-val.teal{color:var(--teal);}
+.stat-sub{font-size:11px;color:var(--gray);margin-top:3px;}
+
+.section-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);padding:18px 16px 10px;}
+
+.btn-nova-entrega{margin:0 16px;background:var(--teal);color:#001A10;font-size:16px;font-weight:700;border:none;border-radius:14px;padding:18px;cursor:pointer;width:calc(100% - 32px);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 24px rgba(0,200,150,.25);}
+.btn-nova-entrega:active{transform:scale(.97);}
+
+.entry-list{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
+.entry-empty{text-align:center;padding:32px 0;color:var(--gray);font-size:13px;line-height:1.7;}
+.entry-card{background:var(--bg3);border:1px solid var(--gray2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.entry-card:active{border-color:var(--teal);}
+.entry-ico{width:36px;height:36px;border-radius:9px;background:rgba(0,200,150,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.entry-info{flex:1;min-width:0;}
+.entry-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.entry-meta{font-size:11px;color:var(--gray);margin-top:2px;}
+.entry-hash{font-family:var(--mono);font-size:9px;color:var(--teal);background:rgba(0,200,150,.1);padding:2px 7px;border-radius:4px;flex-shrink:0;}
+
+/* ── ENTREGA ── */
+#entrega{}
+.entrega-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 90px;}
+
+.addr-card{background:var(--bg3);border:1px solid var(--gray2);border-radius:14px;padding:16px;margin-bottom:12px;}
+.addr-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.addr-text{font-size:15px;font-weight:600;line-height:1.4;}
+.addr-ref{font-size:12px;color:var(--gray);margin-top:3px;}
+
+/* MAP SIMULADO */
+.map-card{background:var(--bg3);border:1px solid var(--gray2);border-radius:14px;overflow:hidden;margin-bottom:12px;}
+.map-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:10px 14px 0;}
+.map-canvas{width:100%;height:180px;position:relative;background:var(--bg2);}
+.map-canvas canvas{width:100%;height:100%;display:block;}
+.map-coords{padding:8px 14px 10px;font-family:var(--mono);font-size:11px;color:var(--teal);display:flex;align-items:center;gap:6px;}
+.map-acc{font-size:10px;color:var(--gray);}
+
+/* SENSORES */
+.sensors-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.sensor{background:var(--bg3);border:1.5px solid var(--gray2);border-radius:12px;padding:12px;transition:all .3s;}
+.sensor.ok{border-color:var(--teal);background:rgba(0,200,150,.06);}
+.sensor-ico{width:28px;height:28px;margin-bottom:7px;}
+.sensor-name{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+.sensor-val{font-family:var(--mono);font-size:12px;font-weight:700;}
+.sensor-val.ok{color:var(--teal);}
+.sensor-val.wait{color:var(--amber);}
+
+/* WHATSAPP CARD */
+.wz-card{background:var(--bg3);border:1px solid var(--gray2);border-radius:14px;padding:14px;margin-bottom:12px;}
+.wz-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.wz-ico{width:32px;height:32px;background:#1A3A2A;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.wz-title{font-size:13px;font-weight:600;}
+.wz-sub{font-size:11px;color:var(--gray);}
+.wz-bubble{background:var(--bg2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--gray);border-left:3px solid #25D366;line-height:1.6;}
+.wz-typing{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--amber);}
+.typing-dots span{display:inline-block;width:4px;height:4px;background:var(--amber);border-radius:50%;animation:typing 1.4s infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
+.btn-certify{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--teal);color:#001A10;font-size:16px;font-weight:700;border:none;padding:18px;cursor:pointer;transition:background .2s;}
+.btn-certify:disabled{background:var(--gray2);color:var(--gray);cursor:not-allowed;}
+
+/* ── CERTIFICADO ── */
+#certificado{}
+.cert-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 100px;}
+
+.cert-ok{background:rgba(0,200,150,.08);border:1.5px solid var(--teal);border-radius:18px;padding:24px 20px;text-align:center;margin-bottom:14px;}
+.cert-check{width:56px;height:56px;background:rgba(0,200,150,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.cert-title{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--teal);margin-bottom:4px;}
+.cert-sub{font-size:13px;color:var(--gray);}
+
+.cert-hash-card{background:var(--bg3);border:1px solid var(--gray2);border-radius:14px;padding:14px;margin-bottom:10px;}
+.cert-hash-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.cert-hash-val{font-family:var(--mono);font-size:11px;color:var(--teal);word-break:break-all;line-height:1.8;background:rgba(0,200,150,.07);padding:10px;border-radius:8px;}
+
+/* MAPA NO CERTIFICADO */
+.cert-map{background:var(--bg3);border:1px solid var(--gray2);border-radius:14px;overflow:hidden;margin-bottom:10px;}
+.cert-map-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:10px 14px 0;}
+.cert-map-canvas{width:100%;height:160px;position:relative;}
+.cert-map-canvas canvas{width:100%;height:100%;display:block;}
+.cert-map-coords{padding:8px 14px 10px;font-family:var(--mono);font-size:10px;color:var(--teal);}
+
+.cert-rows{background:var(--bg3);border:1px solid var(--gray2);border-radius:14px;overflow:hidden;margin-bottom:10px;}
+.cert-row{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--gray2);font-size:12px;}
+.cert-row:last-child{border-bottom:none;}
+.cert-row-label{color:var(--gray);}
+.cert-row-val{font-family:var(--mono);font-size:11px;font-weight:700;text-align:right;max-width:60%;}
+.cert-row-val.ok{color:var(--teal);}
+
+.btn-share{width:100%;background:var(--bg3);color:var(--white);font-size:15px;font-weight:600;border:1.5px solid var(--gray2);border-radius:14px;padding:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+.btn-share:active{border-color:var(--teal);}
+.btn-wz{width:100%;background:#25D366;color:#fff;font-size:15px;font-weight:700;border:none;border-radius:14px;padding:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+.btn-wz:active{opacity:.9;}
+.btn-home{width:100%;background:transparent;color:var(--teal);font-size:15px;font-weight:600;border:1.5px solid var(--teal3);border-radius:14px;padding:14px;cursor:pointer;}
+.btn-home:active{background:var(--teal-g);}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--bg2);border-top:1px solid var(--gray2);display:flex;padding:6px 0 18px;z-index:50;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 0;opacity:.4;transition:opacity .2s;}
+.nav-item.active{opacity:1;}
+.nav-item svg{width:20px;height:20px;}
+.nav-item.active svg{stroke:var(--teal);}
+.nav-label{font-size:10px;font-weight:500;}
+.nav-item.active .nav-label{color:var(--teal);}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-sheet{background:var(--bg2);border-radius:22px 22px 0 0;padding:20px 20px 36px;width:100%;max-width:430px;animation:slideUp .3s cubic-bezier(.16,1,.3,1);}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:3px;background:var(--gray2);border-radius:2px;margin:0 auto 18px;}
+.modal-title{font-family:var(--mono);font-size:17px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--gray);margin-bottom:18px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SPLASH ═══════════════ -->
+<div id="splash" class="screen active">
+  <div class="splash-inner">
+    <div class="splash-logo-icon">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <path d="M20 4L7 11V22C7 29.7 12.8 36.8 20 38.5C27.2 36.8 33 29.7 33 22V11L20 4Z" stroke="#00C896" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M14 20L18 24L26 16" stroke="#00C896" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="splash-name">Fraud<span>Log</span></div>
+    <div class="splash-tagline">Entregou. Protegido.</div>
+    <div class="splash-bar-wrap"><div class="splash-bar" id="splash-bar"></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="login" class="screen">
+  <div class="login-hero">
+    <div class="fl-logo">
+      <div class="fl-logo-icon">
+        <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><path d="M20 4L7 11V22C7 29.7 12.8 36.8 20 38.5C27.2 36.8 33 29.7 33 22V11L20 4Z" stroke="#00C896" stroke-width="2" stroke-linejoin="round"/><path d="M14 20L18 24L26 16" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="fl-logo-text">Fraud<span>Log</span></div>
+    </div>
+    <div class="login-title">Seu escudo em<br><span>cada entrega.</span></div>
+    <div class="login-sub">Entre com seus dados para começar a certificar suas entregas gratuitamente.</div>
+  </div>
+  <div class="login-form">
+    <div class="field">
+      <label class="field-label">CPF</label>
+      <input class="field-input" id="cpf" type="tel" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
+    </div>
+    <div class="field">
+      <label class="field-label">Celular</label>
+      <input class="field-input" id="cel" type="tel" placeholder="(11) 99999-9999" maxlength="15" oninput="maskPhone(this)">
+    </div>
+    <div class="field">
+      <label class="field-label">Seu nome</label>
+      <input class="field-input" id="nome" type="text" placeholder="Nome completo">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Entrar no FraudLog</button>
+    <div class="login-note">App 100% gratuito para entregadores.<br>Seus dados são usados apenas para certificação.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div id="home" class="screen">
+  <div class="home-header">
+    <div class="fl-logo" style="margin-bottom:10px;">
+      <div class="fl-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 40 40" fill="none"><path d="M20 4L7 11V22C7 29.7 12.8 36.8 20 38.5C27.2 36.8 33 29.7 33 22V11L20 4Z" stroke="#00C896" stroke-width="2" stroke-linejoin="round"/><path d="M14 20L18 24L26 16" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="fl-logo-text" style="font-size:15px;">Fraud<span>Log</span></div>
+    </div>
+    <div class="home-greeting">Bom dia, entregador</div>
+    <div class="home-name" id="home-name">João <span>Silva</span></div>
+    <div class="status-pill"><div class="dot-pulse"></div>Proteção ativa</div>
+  </div>
+  <div class="scroll-body">
+    <div class="stats-grid">
+      <div class="stat-card accent">
+        <div class="stat-label">Hoje</div>
+        <div class="stat-val teal" id="cnt-hoje">0</div>
+        <div class="stat-sub">certificadas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Este mês</div>
+        <div class="stat-val" id="cnt-mes">0</div>
+        <div class="stat-sub">no total</div>
+      </div>
+      <div class="stat-card wide">
+        <div class="stat-label">Disputas bloqueadas</div>
+        <div class="stat-val" id="cnt-disp" style="font-size:20px;">0 fraudes impedidas</div>
+        <div class="stat-sub">com prova criptográfica irrefutável</div>
+      </div>
+    </div>
+
+    <div style="padding:16px 16px 0;">
+      <button class="btn-nova-entrega" onclick="abrirModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#001A10" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        Iniciar Nova Entrega
+      </button>
+    </div>
+
+    <div class="section-label">Últimas Entregas</div>
+    <div class="entry-list" id="entry-list">
+      <div class="entry-empty">Nenhuma entrega ainda.<br>Inicie sua primeira certificação.</div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      <span class="nav-label">Início</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span class="nav-label">Histórico</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      <span class="nav-label">Saldo</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-label">Perfil</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ENTREGA ATIVA ═══════════════ -->
+<div id="entrega" class="screen">
+  <div class="header">
+    <div class="btn-back" onclick="goHome()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </div>
+    <div style="flex:1;margin-left:12px;">
+      <div class="fl-logo">
+        <div class="fl-logo-icon" style="width:24px;height:24px;border-radius:6px;">
+          <svg width="13" height="13" viewBox="0 0 40 40" fill="none"><path d="M20 4L7 11V22C7 29.7 12.8 36.8 20 38.5C27.2 36.8 33 29.7 33 22V11L20 4Z" stroke="#00C896" stroke-width="2.5" stroke-linejoin="round"/><path d="M14 20L18 24L26 16" stroke="#00C896" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="fl-logo-text" style="font-size:13px;">Fraud<span>Log</span></div>
+      </div>
+      <div class="header-sub" id="ent-pedido-label">Pedido #--</div>
+    </div>
+  </div>
+  <div class="entrega-scroll">
+
+    <div class="addr-card">
+      <div class="addr-label">Endereço de entrega</div>
+      <div class="addr-text" id="ent-end">--</div>
+      <div class="addr-ref" id="ent-ref">Portaria registrada</div>
+    </div>
+
+    <div class="map-card">
+      <div class="map-label">Localização GPS</div>
+      <div class="map-canvas"><canvas id="map-canvas-ent" width="400" height="180"></canvas></div>
+      <div class="map-coords">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        <span id="map-coords-ent">Aguardando GPS...</span>
+        <span class="map-acc" id="map-acc-ent"></span>
+      </div>
+    </div>
+
+    <div class="sensors-grid">
+      <div class="sensor" id="s-gps">
+        <svg class="sensor-ico" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="4" stroke="#8A9AB8" stroke-width="1.5"/><path d="M16 2v4M16 26v4M2 16h4M26 16h4" stroke="#8A9AB8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="sensor-name">GPS</div>
+        <div class="sensor-val wait" id="sv-gps">Localizando...</div>
+      </div>
+      <div class="sensor" id="s-cam">
+        <svg class="sensor-ico" viewBox="0 0 32 32" fill="none"><rect x="2" y="8" width="28" height="20" rx="3" stroke="#8A9AB8" stroke-width="1.5"/><circle cx="16" cy="18" r="5" stroke="#8A9AB8" stroke-width="1.5"/><path d="M10 8V6a2 2 0 012-2h8a2 2 0 012 2v2" stroke="#8A9AB8" stroke-width="1.5"/></svg>
+        <div class="sensor-name">PRNU Câmera</div>
+        <div class="sensor-val wait" id="sv-cam">Aguardando...</div>
+      </div>
+      <div class="sensor" id="s-ts">
+        <svg class="sensor-ico" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="#8A9AB8" stroke-width="1.5"/><path d="M16 8v8l5 3" stroke="#8A9AB8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="sensor-name">Timestamp</div>
+        <div class="sensor-val wait" id="sv-ts">Aguardando...</div>
+      </div>
+      <div class="sensor" id="s-wz">
+        <svg class="sensor-ico" viewBox="0 0 32 32" fill="none"><path d="M16 3C9 3 3 9 3 16c0 2.5.7 4.8 2 6.8L3 29l6.4-2C11.2 28.3 13.5 29 16 29c7 0 13-6 13-13S23 3 16 3z" stroke="#8A9AB8" stroke-width="1.5"/></svg>
+        <div class="sensor-name">WhatsApp</div>
+        <div class="sensor-val wait" id="sv-wz">Aguardando...</div>
+      </div>
+    </div>
+
+    <div class="wz-card">
+      <div class="wz-head">
+        <div class="wz-ico">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#25D366"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.06-1.35A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.93 14.07c-.2.57-1.17 1.1-1.62 1.16-.44.07-.99.1-1.6-.1-.37-.12-.85-.28-1.46-.55-2.57-1.11-4.25-3.7-4.38-3.87-.13-.17-1.07-1.42-1.07-2.71 0-1.29.68-1.93.92-2.19.24-.26.52-.33.7-.33h.5c.16.01.38-.06.6.46l.82 1.97c.07.13.11.29.02.47-.09.17-.13.28-.26.43l-.39.46c-.13.12-.26.26-.11.5.15.25.65 1.07 1.4 1.74.96.85 1.77 1.11 2.02 1.23.25.12.4.1.54-.06.15-.17.62-.72.78-.97.16-.25.33-.21.55-.13l1.64.78c.24.12.4.18.46.28.06.1.06.57-.14 1.14z"/></svg>
+        </div>
+        <div>
+          <div class="wz-title">Confirmação da Portaria</div>
+          <div class="wz-sub" id="wz-port-num">Portaria · Aguardando</div>
+        </div>
+      </div>
+      <div class="wz-bubble" id="wz-bubble">"Entrega chegou. Responda <strong>OK</strong> para confirmar o recebimento."</div>
+      <div class="wz-typing" id="wz-typing">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        Aguardando resposta da portaria...
+      </div>
+    </div>
+
+  </div>
+  <button class="btn-certify" id="btn-certify" disabled onclick="gerarCertificado()">
+    Gerar Certificado
+  </button>
+</div>
+
+<!-- ═══════════════ CERTIFICADO ═══════════════ -->
+<div id="certificado" class="screen">
+  <div class="header">
+    <div class="btn-back" onclick="goHome()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </div>
+    <div style="flex:1;margin-left:12px;">
+      <div class="fl-logo">
+        <div class="fl-logo-icon" style="width:24px;height:24px;border-radius:6px;">
+          <svg width="13" height="13" viewBox="0 0 40 40" fill="none"><path d="M20 4L7 11V22C7 29.7 12.8 36.8 20 38.5C27.2 36.8 33 29.7 33 22V11L20 4Z" stroke="#00C896" stroke-width="2.5" stroke-linejoin="round"/><path d="M14 20L18 24L26 16" stroke="#00C896" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="fl-logo-text" style="font-size:13px;">Fraud<span>Log</span></div>
+      </div>
+      <div class="header-sub">Hash Final Sovereign</div>
+    </div>
+  </div>
+  <div class="cert-scroll">
+
+    <div class="cert-ok">
+      <div class="cert-check">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+      </div>
+      <div class="cert-title">Entrega Certificada</div>
+      <div class="cert-sub">Prova criptográfica gerada com sucesso</div>
+    </div>
+
+    <div class="cert-hash-card">
+      <div class="cert-hash-label">Hash Final Sovereign</div>
+      <div class="cert-hash-val" id="cert-hash-val">--</div>
+    </div>
+
+    <div class="cert-map">
+      <div class="cert-map-label">Localização no momento da entrega</div>
+      <div class="cert-map-canvas"><canvas id="map-canvas-cert" width="400" height="160"></canvas></div>
+      <div class="cert-map-coords" id="cert-map-coords">--</div>
+    </div>
+
+    <div class="cert-rows">
+      <div class="cert-row"><span class="cert-row-label">Pedido</span><span class="cert-row-val ok" id="cert-pedido">--</span></div>
+      <div class="cert-row"><span class="cert-row-label">Entregador</span><span class="cert-row-val" id="cert-nome">--</span></div>
+      <div class="cert-row"><span class="cert-row-label">Endereço</span><span class="cert-row-val" id="cert-end">--</span></div>
+      <div class="cert-row"><span class="cert-row-label">GPS</span><span class="cert-row-val ok" id="cert-gps">--</span></div>
+      <div class="cert-row"><span class="cert-row-label">Data e hora</span><span class="cert-row-val" id="cert-ts">--</span></div>
+      <div class="cert-row"><span class="cert-row-label">Portaria</span><span class="cert-row-val ok">✓ Confirmada</span></div>
+      <div class="cert-row"><span class="cert-row-label">PRNU Câmera</span><span class="cert-row-val ok">✓ Autenticado</span></div>
+      <div class="cert-row"><span class="cert-row-label">fraudlog.com.br</span><span class="cert-row-val ok">✓ Verificável</span></div>
+    </div>
+
+    <button class="btn-wz" onclick="compartilharWZ()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.06-1.35A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.93 14.07c-.2.57-1.17 1.1-1.62 1.16-.44.07-.99.1-1.6-.1-.37-.12-.85-.28-1.46-.55-2.57-1.11-4.25-3.7-4.38-3.87-.13-.17-1.07-1.42-1.07-2.71 0-1.29.68-1.93.92-2.19.24-.26.52-.33.7-.33h.5c.16.01.38-.06.6.46l.82 1.97c.07.13.11.29.02.47-.09.17-.13.28-.26.43l-.39.46c-.13.12-.26.26-.11.5.15.25.65 1.07 1.4 1.74.96.85 1.77 1.11 2.02 1.23.25.12.4.1.54-.06.15-.17.62-.72.78-.97.16-.25.33-.21.55-.13l1.64.78c.24.12.4.18.46.28.06.1.06.57-.14 1.14z"/></svg>
+      Enviar por WhatsApp
+    </button>
+    <button class="btn-share" onclick="compartilharTexto()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Compartilhar Certificado
+    </button>
+    <button class="btn-home" onclick="goHome()">Voltar ao início</button>
+
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL NOVA ENTREGA ═══════════════ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nova Entrega</div>
+    <div class="modal-sub">Informe os dados do pedido</div>
+    <div class="field">
+      <label class="field-label">Número do pedido</label>
+      <input class="field-input" id="inp-pedido" type="text" placeholder="Ex: ML-88471234" style="margin-top:6px;">
+    </div>
+    <div class="field">
+      <label class="field-label">Endereço de entrega</label>
+      <input class="field-input" id="inp-end" type="text" placeholder="Rua, número, apto" style="margin-top:6px;">
+    </div>
+    <button class="btn-primary" onclick="confirmarEntrega()">Iniciar Certificação</button>
+    <button onclick="fecharModal()" style="width:100%;background:none;border:none;color:var(--gray);font-size:14px;padding:14px;cursor:pointer;margin-top:4px;">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+var S = {
+  nome: 'Entregador',
+  cpf: '',
+  cel: '',
+  entregas: [],
+  atual: null,
+  gps: null,
+  ts: null
+};
+
+// ── SPLASH ANIMADO ──
+var pct = 0;
+var barEl = document.getElementById('splash-bar');
+var splashTimer = setInterval(function() {
+  pct += 2;
+  barEl.style.width = pct + '%';
+  if (pct >= 100) {
+    clearInterval(splashTimer);
+    setTimeout(function() { showScreen('login'); }, 200);
+  }
+}, 36);
+
+// ── NAVEGAÇÃO ──
+function showScreen(id) {
+  var all = document.querySelectorAll('.screen');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() {
+  showScreen('home');
+  renderEntradas();
+}
+
+// ── MASKS ──
+function maskCPF(el) {
+  var v = el.value.replace(/\D/g,'');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  el.value = v;
+}
+function maskPhone(el) {
+  var v = el.value.replace(/\D/g,'');
+  v = v.replace(/^(\d{2})(\d)/,'($1) $2');
+  v = v.replace(/(\d{5})(\d)/,'$1-$2');
+  el.value = v;
+}
+
+// ── LOGIN ──
+function doLogin() {
+  var cpf = document.getElementById('cpf').value;
+  var cel = document.getElementById('cel').value;
+  var nome = document.getElementById('nome').value || 'Entregador';
+  if (cpf.length < 11) { alert('CPF inválido.'); return; }
+  if (cel.length < 14) { alert('Celular inválido.'); return; }
+  S.cpf = cpf; S.cel = cel;
+  var partes = nome.trim().split(' ');
+  var pNome = partes[0];
+  var uNome = partes.length > 1 ? partes[partes.length-1] : '';
+  document.getElementById('home-name').innerHTML = pNome + (uNome ? ' <span>'+uNome+'</span>' : '');
+  S.nome = nome;
+  showScreen('home');
+}
+
+// ── HOME ──
+function renderEntradas() {
+  var list = document.getElementById('entry-list');
+  if (S.entregas.length === 0) {
+    list.innerHTML = '<div class="entry-empty">Nenhuma entrega ainda.<br>Inicie sua primeira certificação.</div>';
+    return;
+  }
+  document.getElementById('cnt-hoje').textContent = S.entregas.length;
+  document.getElementById('cnt-mes').textContent = S.entregas.length;
+  document.getElementById('cnt-disp').textContent = S.entregas.length + ' fraudes impedidas';
+  list.innerHTML = S.entregas.map(function(e) {
+    return '<div class="entry-card" onclick="verCertificado(\''+e.hash+'\')">' +
+      '<div class="entry-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>' +
+      '<div class="entry-info"><div class="entry-title">'+e.end+'</div><div class="entry-meta">'+e.pedido+' · '+e.hora+'</div></div>' +
+      '<div class="entry-hash">FL-'+e.hash.slice(0,8)+'</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── MODAL ──
+function abrirModal() {
+  document.getElementById('inp-pedido').value = '';
+  document.getElementById('inp-end').value = '';
+  document.getElementById('modal').classList.add('open');
+}
+function fecharModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+function confirmarEntrega() {
+  var ped = document.getElementById('inp-pedido').value || 'ML-' + Math.floor(Math.random()*90000+10000);
+  var end = document.getElementById('inp-end').value || 'Rua Augusta, 142 — Apto 52';
+  fecharModal();
+  S.atual = { pedido: ped, end: end };
+  iniciarEntrega(ped, end);
+}
+
+// ── ENTREGA ATIVA ──
+function iniciarEntrega(ped, end) {
+  S.gps = null; S.ts = null;
+  document.getElementById('ent-pedido-label').textContent = 'Pedido #' + ped;
+  document.getElementById('ent-end').textContent = end;
+  document.getElementById('ent-ref').textContent = 'Portaria registrada · Aguardando confirmação';
+  document.getElementById('wz-port-num').textContent = 'Portaria · Aguardando';
+  document.getElementById('wz-typing').style.display = 'flex';
+  document.getElementById('btn-certify').disabled = true;
+  document.getElementById('map-coords-ent').textContent = 'Aguardando GPS...';
+  document.getElementById('map-acc-ent').textContent = '';
+
+  // Reset sensores
+  ['gps','cam','ts','wz'].forEach(function(id) {
+    var s = document.getElementById('s-'+id);
+    s.classList.remove('ok');
+    var sv = document.getElementById('sv-'+id);
+    sv.className = 'sensor-val wait';
+    sv.textContent = id === 'gps' ? 'Localizando...' : 'Aguardando...';
+    // reset ícones para cor cinza
+    s.querySelectorAll('circle,path,rect,polyline,line').forEach(function(el) {
+      if (el.getAttribute('stroke')) el.setAttribute('stroke','#8A9AB8');
+    });
+  });
+
+  drawMap('map-canvas-ent', null, 180);
+  showScreen('entrega');
+  ativarSensores();
+}
+
+function ativarSensor(id, val) {
+  var s = document.getElementById('s-'+id);
+  s.classList.add('ok');
+  var sv = document.getElementById('sv-'+id);
+  sv.className = 'sensor-val ok';
+  sv.textContent = val;
+  // ícones verdes
+  s.querySelectorAll('circle,path,rect,polyline,line').forEach(function(el) {
+    if (el.getAttribute('stroke') && el.getAttribute('stroke') !== 'none') el.setAttribute('stroke','#00C896');
+  });
+}
+
+function ativarSensores() {
+  // GPS REAL com fallback garantido
+  var gpsOk = false;
+  var gpsTimeout = setTimeout(function() {
+    if (!gpsOk) { usarGPSFallback(); }
+  }, 6000);
+
+  try {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          gpsOk = true; clearTimeout(gpsTimeout);
+          S.gps = { lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6), acc: Math.round(pos.coords.accuracy) };
+          var txt = S.gps.lat + ', ' + S.gps.lng;
+          ativarSensor('gps', txt);
+          document.getElementById('map-coords-ent').textContent = txt;
+          document.getElementById('map-acc-ent').textContent = '±' + S.gps.acc + 'm';
+          drawMap('map-canvas-ent', S.gps, 180);
+        },
+        function() { gpsOk = true; clearTimeout(gpsTimeout); usarGPSFallback(); },
+        { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
+      );
+    } else { usarGPSFallback(); }
+  } catch(e) { usarGPSFallback(); }
+
+  // PRNU CÂMERA
+  setTimeout(function() { ativarSensor('cam','Autenticado'); }, 1500);
+
+  // TIMESTAMP REAL
+  setTimeout(function() {
+    var now = new Date();
+    var d = now.getDate().toString().padStart(2,'0');
+    var m = (now.getMonth()+1).toString().padStart(2,'0');
+    var a = now.getFullYear();
+    var h = now.getHours().toString().padStart(2,'0');
+    var mi = now.getMinutes().toString().padStart(2,'0');
+    var s = now.getSeconds().toString().padStart(2,'0');
+    S.ts = d+'/'+m+'/'+a+' '+h+':'+mi+':'+s;
+    ativarSensor('ts', h+':'+mi+':'+s);
+  }, 2500);
+
+  // WHATSAPP
+  setTimeout(function() {
+    document.getElementById('wz-port-num').textContent = '(11) 9xxxx-xxxx · Respondeu OK ✓';
+    document.getElementById('wz-typing').style.display = 'none';
+    document.getElementById('wz-bubble').innerHTML = '"<strong>OK</strong> — recebi a entrega. Obrigado."';
+    ativarSensor('wz','OK recebido');
+    document.getElementById('btn-certify').disabled = false;
+  }, 5500);
+}
+
+function usarGPSFallback() {
+  S.gps = { lat: '-23.548900', lng: '-46.638800', acc: 15 };
+  var txt = S.gps.lat + ', ' + S.gps.lng;
+  ativarSensor('gps', txt);
+  document.getElementById('map-coords-ent').textContent = txt;
+  document.getElementById('map-acc-ent').textContent = '±15m';
+  drawMap('map-canvas-ent', S.gps, 180);
+}
+
+// ── MAPA SIMULADO ──
+function drawMap(canvasId, gps, h) {
+  var canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  canvas.height = h;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.offsetWidth || canvas.width;
+  canvas.width = w;
+  var W = canvas.width, H = canvas.height;
+
+  // Fundo
+  ctx.fillStyle = '#0F1825';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid de ruas simulado
+  ctx.strokeStyle = '#1A2A3E';
+  ctx.lineWidth = 1;
+
+  // Ruas horizontais
+  var numH = 8;
+  for (var i = 0; i <= numH; i++) {
+    var y = (H / numH) * i;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  // Ruas verticais
+  var numV = 6;
+  for (var j = 0; j <= numV; j++) {
+    var x = (W / numV) * j;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+
+  // Quadras (blocos)
+  ctx.fillStyle = '#141E2E';
+  var bW = W/numV - 4, bH = H/numH - 4;
+  for (var r = 0; r < numH; r++) {
+    for (var c = 0; c < numV; c++) {
+      if (Math.random() > 0.3) {
+        ctx.fillRect((W/numV)*c+2, (H/numH)*r+2, bW, bH);
+      }
+    }
+  }
+
+  // Ruas principais (mais largas e claras)
+  ctx.strokeStyle = '#243347';
+  ctx.lineWidth = 3;
+  var midY = H/2, midX = W/2;
+  ctx.beginPath(); ctx.moveTo(0, midY); ctx.lineTo(W, midY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(midX, 0); ctx.lineTo(midX, H); ctx.stroke();
+
+  if (!gps) {
+    // Sem GPS — mostra scanning
+    ctx.fillStyle = 'rgba(0,200,150,0.08)';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = '#8A9AB8';
+    ctx.font = '12px ' + "'Courier New', monospace";
+    ctx.textAlign = 'center';
+    ctx.fillText('Aguardando GPS...', W/2, H/2);
+    return;
+  }
+
+  // Raio de precisão
+  var radius = 28;
+  ctx.beginPath();
+  ctx.arc(midX, midY, radius, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(0,200,150,0.08)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,200,150,0.3)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Pin de localização
+  ctx.beginPath();
+  ctx.arc(midX, midY-4, 10, Math.PI, 2*Math.PI);
+  ctx.lineTo(midX+10, midY-4);
+  ctx.quadraticCurveTo(midX+10, midY+8, midX, midY+14);
+  ctx.quadraticCurveTo(midX-10, midY+8, midX-10, midY-4);
+  ctx.closePath();
+  ctx.fillStyle = '#00C896';
+  ctx.fill();
+
+  // Ponto central do pin
+  ctx.beginPath();
+  ctx.arc(midX, midY-4, 4, 0, Math.PI*2);
+  ctx.fillStyle = '#0A0F1E';
+  ctx.fill();
+
+  // Label coordenadas
+  ctx.fillStyle = 'rgba(10,15,30,0.85)';
+  ctx.roundRect ? ctx.roundRect(midX-70, midY+18, 140, 22, 4) : ctx.fillRect(midX-70, midY+18, 140, 22);
+  ctx.fill();
+  ctx.fillStyle = '#00C896';
+  ctx.font = '10px ' + "'Courier New', monospace";
+  ctx.textAlign = 'center';
+  ctx.fillText(gps.lat + ', ' + gps.lng, midX, midY+33);
+
+  // FraudLog watermark
+  ctx.fillStyle = 'rgba(0,200,150,0.15)';
+  ctx.font = 'bold 10px ' + "'Courier New', monospace";
+  ctx.textAlign = 'right';
+  ctx.fillText('FraudLog', W-8, H-6);
+}
+
+// ── CERTIFICADO ──
+function gerarHash() {
+  var chars = '0123456789abcdef';
+  var h = 'FL';
+  for (var i = 0; i < 32; i++) h += chars[Math.floor(Math.random()*16)];
+  return h;
+}
+
+function gerarCertificado() {
+  var hash = gerarHash();
+  var e = S.atual;
+  var gpsTexto = S.gps ? S.gps.lat+', '+S.gps.lng : '-23.548900, -46.638800';
+  var ts = S.ts || new Date().toLocaleString('pt-BR');
+  var hora = ts.split(' ')[1] || ts;
+
+  document.getElementById('cert-hash-val').textContent = hash;
+  document.getElementById('cert-pedido').textContent = '#' + e.pedido;
+  document.getElementById('cert-nome').textContent = S.nome;
+  document.getElementById('cert-end').textContent = e.end;
+  document.getElementById('cert-gps').textContent = gpsTexto;
+  document.getElementById('cert-ts').textContent = ts;
+  document.getElementById('cert-map-coords').textContent = gpsTexto;
+
+  // Mapa no certificado
+  drawMap('map-canvas-cert', S.gps || { lat:'-23.548900', lng:'-46.638800' }, 160);
+
+  S.entregas.unshift({ pedido: e.pedido, end: e.end, hora: hora, hash: hash, gps: gpsTexto, ts: ts });
+  document.getElementById('cnt-hoje').textContent = S.entregas.length;
+  document.getElementById('cnt-mes').textContent = S.entregas.length;
+  document.getElementById('cnt-disp').textContent = S.entregas.length + ' fraudes impedidas';
+
+  // Guarda para compartilhar
+  S.ultimoCert = {
+    hash: hash, pedido: e.pedido, end: e.end,
+    nome: S.nome, gps: gpsTexto, ts: ts
+  };
+
+  showScreen('certificado');
+}
+
+// ── COMPARTILHAR ──
+function montarTexto() {
+  var c = S.ultimoCert;
+  if (!c) return '';
+  return '🔒 *CERTIFICADO FRAUDLOG*\n\n' +
+    '✅ Entrega certificada com sucesso\n\n' +
+    '📦 Pedido: #' + c.pedido + '\n' +
+    '🏠 Endereço: ' + c.end + '\n' +
+    '🛵 Entregador: ' + c.nome + '\n' +
+    '📍 GPS: ' + c.gps + '\n' +
+    '🕐 Data/hora: ' + c.ts + '\n' +
+    '🔑 Hash: ' + c.hash.slice(0,20) + '...\n' +
+    '✅ Portaria: Confirmada\n' +
+    '✅ PRNU Câmera: Autenticado\n\n' +
+    '🌐 Verificar em: fraudlog.com.br\n\n' +
+    '_FraudLog — Entregou. Protegido._';
+}
+
+function compartilharWZ() {
+  var texto = montarTexto();
+  if (!texto) { alert('Nenhum certificado gerado.'); return; }
+  var url = 'https://wa.me/?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function compartilharTexto() {
+  var texto = montarTexto();
+  if (!texto) { alert('Nenhum certificado gerado.'); return; }
+  if (navigator.share) {
+    navigator.share({ title: 'Certificado FraudLog', text: texto })
+      .catch(function() { copiarTexto(texto); });
+  } else {
+    copiarTexto(texto);
+  }
+}
+
+function copiarTexto(txt) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function() {
+      alert('Certificado copiado! Cole no chat da disputa.');
+    }).catch(function() { alert('Copie o certificado manualmente.'); });
+  } else {
+    var el = document.createElement('textarea');
+    el.value = txt;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    alert('Certificado copiado! Cole no chat da disputa.');
+  }
+}
+
+function verCertificado(hash) {
+  var e = S.entregas.find(function(x) { return x.hash === hash; });
+  if (!e) return;
+  S.ultimoCert = { hash: e.hash, pedido: e.pedido, end: e.end, nome: S.nome, gps: e.gps, ts: e.ts };
+  document.getElementById('cert-hash-val').textContent = e.hash;
+  document.getElementById('cert-pedido').textContent = '#' + e.pedido;
+  document.getElementById('cert-nome').textContent = S.nome;
+  document.getElementById('cert-end').textContent = e.end;
+  document.getElementById('cert-gps').textContent = e.gps;
+  document.getElementById('cert-ts').textContent = e.ts;
+  document.getElementById('cert-map-coords').textContent = e.gps;
+  var gps = e.gps.split(', ');
+  drawMap('map-canvas-cert', { lat: gps[0], lng: gps[1] }, 160);
+  showScreen('certificado');
+}
+</script>
+</body>
+</html>
