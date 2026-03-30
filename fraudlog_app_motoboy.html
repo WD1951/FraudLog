@@ -2,476 +2,165 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>FraudLog — Entregador</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FraudLog</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0f172a; color: #e2e8f0; line-height: 1.5;
-      padding: 0; margin: 0; padding-bottom: 70px;
+      background: #1a1a2e;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
     }
-    .screen { display: none; padding: 16px; min-height: 100vh; }
-    .screen.active { display: block; }
-    
-    header {
-      background: linear-gradient(135deg, #1e40af, #0f172a);
-      padding: 20px 16px 16px; border-radius: 0 0 20px 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 16px;
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
     }
-    .logo { font-size: 1.4rem; font-weight: 700; color: #60a5fa; margin-bottom: 4px; }
-    .subtitle { font-size: 0.95rem; color: #94a3b8; }
-
-    .card {
-      background: #1e293b; border-radius: 16px; padding: 16px;
-      margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    h1 {
+      color: #4ecca3;
+      text-align: center;
+      margin-bottom: 30px;
     }
-    .card-title { font-weight: 600; margin-bottom: 8px; color: #f1f5f9; }
-
-    /* ✅ INPUTS CORRIGIDOS PARA CELULAR */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #cccccc;
+    }
     input {
       width: 100%;
-      padding: 14px 12px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #fff;
+      padding: 15px;
       font-size: 16px;
-      margin-bottom: 12px;
+      border: 2px solid #4ecca3;
+      border-radius: 8px;
+      background: #16213e;
+      color: #ffffff;
       box-sizing: border-box;
-      -webkit-appearance: none;
     }
     input:focus {
       outline: none;
-      border-color: #60a5fa;
+      border-color: #0f3460;
     }
-
-    .btn {
-      width: 100%; padding: 14px; border-radius: 12px; border: none;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: white; font-weight: 600; font-size: 1rem;
-      cursor: pointer; transition: transform 0.1s, opacity 0.2s;
-      margin-bottom: 10px;
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      background: #4ecca3;
+      color: #1a1a2e;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
     }
-    .btn:active { transform: scale(0.98); opacity: 0.95; }
-    .btn-outline {
-      background: transparent; border: 2px solid #60a5fa; color: #60a5fa;
+    button:active {
+      background: #3db892;
     }
-    .btn-success { background: linear-gradient(135deg, #059669, #047857); }
-    .btn-sm { padding: 10px 14px; font-size: 0.9rem; width: auto; }
-
-    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
-    .stat-box {
-      background: #0f172a; padding: 12px; border-radius: 12px; text-align: center;
+    .hidden {
+      display: none;
     }
-    .stat-value { font-size: 1.3rem; font-weight: 700; color: #60a5fa; }
-    .stat-label { font-size: 0.8rem; color: #94a3b8; }
-
-    .step {
-      display: flex; align-items: center; gap: 10px; padding: 10px 0;
-      border-bottom: 1px solid #334155;
+    .card {
+      background: #16213e;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
     }
-    .step:last-child { border-bottom: none; }
-    .step-icon {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: #334155; display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; flex-shrink: 0;
-    }
-    .step-icon.done { background: #059669; }
-    .step-text { font-size: 0.95rem; }
-    .step-sub { font-size: 0.8rem; color: #94a3b8; }
-
-    .hash-box {
-      background: #0f172a; border-radius: 10px; padding: 12px;
-      font-family: monospace; font-size: 0.85rem; word-break: break-all;
-      border: 1px solid #334155; margin: 10px 0;
-    }
-    .check { color: #059669; font-weight: 600; }
-
-    .nav-bottom {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #1e293b; display: flex; justify-content: space-around;
-      padding: 10px 0; border-top: 1px solid #334155;
-    }
-    .nav-item {
-      text-align: center; color: #94a3b8; font-size: 0.75rem;
-      padding: 6px 10px; border-radius: 10px;
-    }
-    .nav-item.active { color: #60a5fa; background: #0f172a; }
-    .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 2px; }
-
-    .hidden { display: none !important; }
-    .text-center { text-align: center; }
-    .mt-2 { margin-top: 16px; }
-    .mb-1 { margin-bottom: 8px; }
-    .success-msg { color: #059669; font-weight: 500; }
   </style>
 </head>
 <body>
-
-  <!-- TELA: LOGIN -->
-  <div id="screen-login" class="screen active">
-    <header>
-      <div class="logo">FraudLog</div>
-      <div class="subtitle">Seu escudo em cada entrega</div>
-    </header>
-    <div class="card">
-      <div class="card-title">Entre com seus dados</div>
-      <input type="text" id="cpf" placeholder="CPF (somente números)" maxlength="11">
-      <input type="tel" id="celular" placeholder="Celular com DDD" maxlength="11">
-      <button id="btn-login" class="btn" ontouchstart="handleTouch(event)" onclick="fazerLogin()">Entrar no FraudLog</button>
-      <div class="text-center" style="font-size:0.8rem;color:#94a3b8;margin-top:8px;">
-        App gratuito • Dados usados apenas para certificação
-      </div>
-    </div>
-  </div>
-
-  <!-- TELA: DASHBOARD -->
-  <div id="screen-dashboard" class="screen">
-    <header>
-      <div class="logo">Bom dia, entregador</div>
-      <div class="subtitle" id="user-name">João Silva</div>
-    </header>
+  <div class="container">
+    <h1>🛡️ FraudLog</h1>
     
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <strong>App ativo — proteção ligada</strong>
-        <span class="check">✓ Online</span>
-      </div>
-    </div>
-
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-value" id="stat-hoje">0</div>
-        <div class="stat-label">Hoje</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value" id="stat-mes">0</div>
-        <div class="stat-label">Este mês</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value" id="stat-disputas">0</div>
-        <div class="stat-label">Disputas bloqueadas</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value" id="stat-fraudes">0</div>
-        <div class="stat-label">Fraudes impedidas</div>
-      </div>
-    </div>
-
-    <button id="btn-nova-entrega" class="btn" ontouchstart="handleTouch(event)" onclick="abrirNovaEntrega()">
-      🚀 Iniciar Nova Entrega
-    </button>
-
-    <div class="card">
-      <div class="card-title">Últimas Entregas</div>
-      <div id="lista-entregas" class="text-center" style="color:#94a3b8;padding:10px;">
-        Nenhuma entrega ainda.<br><small>Inicie sua primeira certificação.</small>
-      </div>
-    </div>
-
-    <nav class="nav-bottom">
-      <div class="nav-item active"><span class="nav-icon">🏠</span>Início</div>
-      <div class="nav-item"><span class="nav-icon">📋</span>Histórico</div>
-      <div class="nav-item"><span class="nav-icon">💰</span>Saldo</div>
-      <div class="nav-item"><span class="nav-icon">👤</span>Perfil</div>
-    </nav>
-  </div>
-
-  <!-- TELA: ENTREGA EM ANDAMENTO -->
-  <div id="screen-entrega" class="screen">
-    <header>
-      <div class="logo">Entrega em andamento</div>
-      <div class="subtitle" id="pedido-id">Pedido #ML-00000</div>
-    </header>
-
-    <div class="card">
-      <div class="card-title">Endereço de entrega</div>
-      <div id="endereco-entrega" style="font-size:1.05rem;">Rua das Flores, 142 — Apto 82</div>
-      <div style="color:#94a3b8;font-size:0.9rem;margin-top:4px;">Torre B · Porteiro disponível</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Verificações em tempo real</div>
-      
-      <div class="step">
-        <div class="step-icon" id="icon-gps">📍</div>
-        <div>
-          <div class="step-text">GPS</div>
-          <div class="step-sub" id="status-gps">Aguardando...</div>
+    <!-- TELA DE LOGIN -->
+    <div id="tela-login">
+      <div class="card">
+        <div class="form-group">
+          <label>CPF (11 números)</label>
+          <input type="text" id="cpf" placeholder="00000000000" maxlength="11" inputmode="numeric">
         </div>
-      </div>
-      
-      <div class="step">
-        <div class="step-icon" id="icon-prnu">📷</div>
-        <div>
-          <div class="step-text">PRNU Câmera</div>
-          <div class="step-sub" id="status-prnu">Aguardando...</div>
+        <div class="form-group">
+          <label>Celular (11 números)</label>
+          <input type="tel" id="celular" placeholder="11999999999" maxlength="11" inputmode="numeric">
         </div>
-      </div>
-      
-      <div class="step">
-        <div class="step-icon" id="icon-time">⏱️</div>
-        <div>
-          <div class="step-text">Timestamp</div>
-          <div class="step-sub" id="status-time">Aguardando...</div>
-        </div>
-      </div>
-      
-      <div class="step">
-        <div class="step-icon" id="icon-zap">💬</div>
-        <div>
-          <div class="step-text">WhatsApp</div>
-          <div class="step-sub" id="status-zap">Aguardando...</div>
-        </div>
+        <button onclick="fazerLogin()">ENTRAR</button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Confirmação da Portaria</div>
-      <div style="background:#0f172a;padding:12px;border-radius:10px;margin-bottom:10px;">
-        <em>"Entrega para o <strong>Apto 82</strong>. Responda <strong>OK</strong> para confirmar o recebimento."</em>
+    <!-- TELA DASHBOARD -->
+    <div id="tela-dashboard" class="hidden">
+      <div class="card">
+        <h2 style="color: #4ecca3;">Bem-vindo!</h2>
+        <p>App ativo — proteção ligada ✓</p>
       </div>
-      <div id="status-portaria" style="color:#94a3b8;">Aguardando resposta da portaria...</div>
+      <button onclick="iniciarEntrega()">🚀 Nova Entrega</button>
+      <button onclick="fazerLogout()" style="background: #e94560; margin-top: 10px;">Sair</button>
     </div>
 
-    <button id="btn-gerar-cert" class="btn btn-success" ontouchstart="handleTouch(event)" onclick="gerarCertificado()">
-      🛡️ Gerar Certificado
-    </button>
-    <button class="btn btn-outline" ontouchstart="handleTouch(event)" onclick="voltarAoInicio()">
-      ← Voltar ao início
-    </button>
-  </div>
-
-  <!-- TELA: CERTIFICADO -->
-  <div id="screen-certificado" class="screen">
-    <header>
-      <div class="logo success-msg">✓ Entrega Certificada</div>
-      <div class="subtitle">Prova criptográfica gerada com sucesso</div>
-    </header>
-
-    <div class="card">
-      <div class="card-title">Hash Final Sovereign</div>
-      <div class="hash-box" id="hash-final">FL-7f3a9c2e4b8d1f6a...e821</div>
+    <!-- TELA ENTREGA -->
+    <div id="tela-entrega" class="hidden">
+      <div class="card">
+        <h2>Entrega em Andamento</h2>
+        <p id="info-entrega">Carregando...</p>
+      </div>
+      <button onclick="gerarCertificado()">🛡️ Gerar Certificado</button>
+      <button onclick="voltarDashboard()" style="background: #666; margin-top: 10px;">Voltar</button>
     </div>
 
-    <div class="card">
-      <div class="card-title">Resumo da Certificação</div>
-      <div class="step">
-        <div class="step-icon done">✓</div>
-        <div class="step-text">Pedido <strong id="cert-pedido">#ML-00000</strong></div>
+    <!-- TELA CERTIFICADO -->
+    <div id="tela-certificado" class="hidden">
+      <div class="card">
+        <h2 style="color: #4ecca3;">✓ Certificada!</h2>
+        <p>Hash:</p>
+        <p id="hash-resultado" style="word-break: break-all; font-size: 12px; background: #1a1a2e; padding: 10px; border-radius: 4px;"></p>
       </div>
-      <div class="step">
-        <div class="step-icon done">✓</div>
-        <div class="step-text">Endereço: <span id="cert-endereco">Rua das Flores, 142</span></div>
-      </div>
-      <div class="step">
-        <div class="step-icon done">✓</div>
-        <div class="step-text">GPS: <span id="cert-gps">-23.5489, -46.6388</span></div>
-      </div>
-      <div class="step">
-        <div class="step-icon done">✓</div>
-        <div class="step-text">Timestamp: <span id="cert-time">--:--:--</span></div>
-      </div>
-      <div class="step">
-        <div class="step-icon done">✓</div>
-        <div class="step-text">Portaria: <span class="check">Confirmada</span></div>
-      </div>
-      <div class="step">
-        <div class="step-icon done">✓</div>
-        <div class="step-text">PRNU: <span class="check">Autenticado</span></div>
-      </div>
-    </div>
-
-    <button class="btn" ontouchstart="handleTouch(event)" onclick="compartilharCertificado()">
-      📤 Compartilhar Certificado
-    </button>
-    <button class="btn btn-outline" ontouchstart="handleTouch(event)" onclick="novaEntrega()">
-      🔄 Nova Entrega
-    </button>
-  </div>
-
-  <!-- TELA: NOVA ENTREGA (FORM) -->
-  <div id="screen-form-entrega" class="screen">
-    <header>
-      <div class="logo">Nova Entrega</div>
-      <div class="subtitle">Informe os dados do pedido</div>
-    </header>
-    <div class="card">
-      <label class="mb-1">Número do pedido</label>
-      <input type="text" id="novo-pedido" placeholder="Ex: ML-12345">
-      <label class="mb-1">Endereço de entrega</label>
-      <input type="text" id="novo-endereco" placeholder="Rua, número, complemento">
-      <button class="btn btn-success" ontouchstart="handleTouch(event)" onclick="iniciarCertificacao()">
-        ▶ Iniciar Certificação
-      </button>
-      <button class="btn btn-outline" ontouchstart="handleTouch(event)" onclick="voltarAoInicio()">
-        Cancelar
-      </button>
+      <button onclick="novaEntrega()">🔄 Nova Entrega</button>
+      <button onclick="voltarDashboard()" style="background: #666; margin-top: 10px;">Voltar</button>
     </div>
   </div>
 
   <script>
-    function handleTouch(e) {
-      if (e.type === 'touchstart') {
-        e.currentTarget.click();
-        e.preventDefault();
-      }
-    }
-
-    function mostrarTela(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      window.scrollTo(0, 0);
-    }
-
-    function gerarHashSovereign() {
-      const chars = '0123456789abcdef';
-      let hash = 'FL-';
-      for (let i = 0; i < 32; i++) hash += chars[Math.floor(Math.random() * chars.length)];
-      return hash;
-    }
-
-    function formatarHora() {
-      const now = new Date();
-      return now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-    }
-
-    function simularGPS() {
-      return { lat: (-23.5489 - Math.random()*0.01).toFixed(4), lng: (-46.6388 - Math.random()*0.01).toFixed(4) };
-    }
-
     function fazerLogin() {
-      const cpf = document.getElementById('cpf').value.replace(/\D/g,'');
-      const celular = document.getElementById('celular').value.replace(/\D/g,'');
-      
-      if (cpf.length < 11 || celular.length < 10) {
-        alert('Informe CPF e Celular válidos para continuar.');
+      var cpf = document.getElementById('cpf').value;
+      var celular = document.getElementById('celular').value;
+      if (cpf.length < 3 || celular.length < 3) {
+        alert('Digite CPF e Celular válidos');
         return;
       }
-      
-      localStorage.setItem('fraudlog_user', JSON.stringify({ cpf, celular, nome: 'Entregador ' + cpf.slice(0,3) }));
-      document.getElementById('user-name').textContent = 'Entregador ' + cpf.slice(0,3);
-      
-      const stats = JSON.parse(localStorage.getItem('fraudlog_stats') || '{"hoje":0,"mes":0,"disputas":0,"fraudes":0}');
-      document.getElementById('stat-hoje').textContent = stats.hoje;
-      document.getElementById('stat-mes').textContent = stats.mes;
-      document.getElementById('stat-disputas').textContent = stats.disputas;
-      document.getElementById('stat-fraudes').textContent = stats.fraudes;
-      
-      mostrarTela('screen-dashboard');
+      document.getElementById('tela-login').classList.add('hidden');
+      document.getElementById('tela-dashboard').classList.remove('hidden');
     }
 
-    function abrirNovaEntrega() {
-      mostrarTela('screen-form-entrega');
-    }
-
-    function iniciarCertificacao() {
-      const pedido = document.getElementById('novo-pedido').value.trim() || 'ML-' + Math.floor(Math.random()*90000+10000);
-      const endereco = document.getElementById('novo-endereco').value.trim() || 'Rua das Flores, 142 — Apto 82';
-      
-      document.getElementById('pedido-id').textContent = 'Pedido #' + pedido;
-      document.getElementById('endereco-entrega').textContent = endereco;
-      
-      setTimeout(() => {
-        const gps = simularGPS();
-        document.getElementById('status-gps').textContent = `${gps.lat}, ${gps.lng}`;
-        document.getElementById('icon-gps').classList.add('done');
-        document.getElementById('icon-gps').textContent = '✓';
-      }, 800);
-      
-      setTimeout(() => {
-        document.getElementById('status-prnu').textContent = 'Sensor autenticado';
-        document.getElementById('icon-prnu').classList.add('done');
-        document.getElementById('icon-prnu').textContent = '✓';
-      }, 1500);
-      
-      setTimeout(() => {
-        document.getElementById('status-time').textContent = formatarHora();
-        document.getElementById('icon-time').classList.add('done');
-        document.getElementById('icon-time').textContent = '✓';
-      }, 2200);
-      
-      setTimeout(() => {
-        document.getElementById('status-zap').textContent = 'Mensagem enviada ✓';
-        document.getElementById('icon-zap').classList.add('done');
-        document.getElementById('icon-zap').textContent = '✓';
-      }, 3000);
-      
-      setTimeout(() => {
-        document.getElementById('status-portaria').innerHTML = '<span class="check">✓ Confirmada pela portaria</span>';
-      }, 4000);
-      
-      localStorage.setItem('fraudlog_entrega_atual', JSON.stringify({
-        pedido, endereco, gps: simularGPS(), hora: formatarHora()
-      }));
-      
-      mostrarTela('screen-entrega');
+    function iniciarEntrega() {
+      document.getElementById('info-entrega').innerText = 'Pedido #' + Math.floor(Math.random() * 90000 + 10000);
+      document.getElementById('tela-dashboard').classList.add('hidden');
+      document.getElementById('tela-entrega').classList.remove('hidden');
     }
 
     function gerarCertificado() {
-      const dados = JSON.parse(localStorage.getItem('fraudlog_entrega_atual') || '{}');
-      const hash = gerarHashSovereign();
-      
-      document.getElementById('hash-final').textContent = hash;
-      document.getElementById('cert-pedido').textContent = '#' + (dados.pedido || 'ML-00000');
-      document.getElementById('cert-endereco').textContent = dados.endereco || 'Rua das Flores, 142';
-      document.getElementById('cert-gps').textContent = dados.gps ? `${dados.gps.lat}, ${dados.gps.lng}` : '-23.5489, -46.6388';
-      document.getElementById('cert-time').textContent = dados.hora || formatarHora();
-      
-      let stats = JSON.parse(localStorage.getItem('fraudlog_stats') || '{"hoje":0,"mes":0,"disputas":0,"fraudes":0}');
-      stats.hoje += 1; stats.mes += 1; stats.fraudes += 1;
-      localStorage.setItem('fraudlog_stats', JSON.stringify(stats));
-      
-      const lista = document.getElementById('lista-entregas');
-      if (lista.textContent.includes('Nenhuma entrega')) {
-        lista.innerHTML = '';
-      }
-      const item = document.createElement('div');
-      item.style.cssText = 'padding:10px;border-bottom:1px solid #334155;font-size:0.9rem;';
-      item.innerHTML = `<strong>#${dados.pedido || 'ML-XXXXX'}</strong><br><small>${dados.endereco || 'Endereço'}</small><br><span style="color:#059669">✓ Certificado</span>`;
-      lista.prepend(item);
-      
-      mostrarTela('screen-certificado');
-    }
-
-    function compartilharCertificado() {
-      const hash = document.getElementById('hash-final').textContent;
-      if (navigator.share) {
-        navigator.share({
-          title: 'Certificado FraudLog',
-          text: `Entrega certificada com hash soberano: ${hash}`,
-          url: window.location.href
-        }).catch(() => {});
-      } else {
-        navigator.clipboard.writeText(hash).then(() => {
-          alert('Hash copiado para a área de transferência!');
-        });
-      }
+      var hash = 'FL-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      document.getElementById('hash-resultado').innerText = hash;
+      document.getElementById('tela-entrega').classList.add('hidden');
+      document.getElementById('tela-certificado').classList.remove('hidden');
     }
 
     function novaEntrega() {
-      document.getElementById('novo-pedido').value = '';
-      document.getElementById('novo-endereco').value = '';
-      mostrarTela('screen-form-entrega');
+      document.getElementById('tela-certificado').classList.add('hidden');
+      document.getElementById('tela-entrega').classList.remove('hidden');
     }
 
-    function voltarAoInicio() {
-      mostrarTela('screen-dashboard');
+    function voltarDashboard() {
+      document.getElementById('tela-entrega').classList.add('hidden');
+      document.getElementById('tela-certificado').classList.add('hidden');
+      document.getElementById('tela-dashboard').classList.remove('hidden');
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('touchstart', handleTouch, {passive: true});
-      });
-      
-      document.getElementById('cpf')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') document.getElementById('celular').focus();
-      });
-      document.getElementById('celular')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') fazerLogin();
-      });
-    });
+    function fazerLogout() {
+      document.getElementById('cpf').value = '';
+      document.getElementById('celular').value = '';
+      document.getElementById('tela-dashboard').classList.add('hidden');
+      document.getElementById('tela-login').classList.remove('hidden');
+    }
   </script>
 </body>
 </html>
