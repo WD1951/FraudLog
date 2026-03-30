@@ -3,144 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FraudLog — Certificação de Entrega</title>
-    
+    <title>FraudLog — Protocolo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        fraudGreen: '#00C896', // Verde da marca FraudLog
-                        fraudBlue: '#2563eb',  // Azul de proteção
-                        fraudBg: '#FFFFFF',    // Fundo Branco solicitado
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        #map { height: 250px; z-index: 1; border-radius: 1.5rem; border: 1px solid #e2e8f0; }
-        .gps-pulse {
-            width: 12px; height: 12px;
-            background: #00C896; border-radius: 50%;
-            box-shadow: 0 0 0 rgba(0, 200, 150, 0.4);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 200, 150, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 200, 150, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 200, 150, 0); }
-        }
+        :root { --brand: #00C896; --dark: #0A0F1E; }
+        body { background-color: var(--dark); color: white; font-family: sans-serif; }
+        #map { height: 200px; border-radius: 1rem; border: 1px solid var(--brand); }
+        .input-white { background: white; color: #0A0F1E; font-weight: bold; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-slate-900">
-
-    <div class="max-w-[430px] mx-auto bg-white min-h-screen shadow-xl flex flex-col border-x border-gray-100">
-        
-        <header class="p-8 pb-4 text-center border-b border-gray-50">
-            <div class="flex flex-col items-center gap-2">
-                <div class="w-16 h-16 bg-emerald-50 border-2 border-fraudGreen rounded-2xl flex items-center justify-center shadow-sm">
-                    <svg width="35" height="35" viewBox="0 0 40 40" fill="none">
-                        <path d="M20 4L7 11V22C7 29.7 12.8 36.8 20 38.5C27.2 36.8 33 29.7 33 22V11L20 4Z" stroke="#00C896" stroke-width="2.5" stroke-linejoin="round"/>
-                        <path d="M14 20L18 24L26 16" stroke="#00C896" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <h1 class="text-2xl font-black tracking-tighter text-slate-800">Fraud<span class="text-fraudGreen">Log</span></h1>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Sovereign Certification</p>
+<body>
+    <div class="max-w-[400px] mx-auto min-h-screen p-6 flex flex-col gap-6">
+        <header class="text-center py-4">
+            <div class="w-16 h-16 border-2 border-[#00C896] rounded-2xl mx-auto flex items-center justify-center mb-2">
+                <span class="text-2xl">🛡️</span>
             </div>
+            <h1 class="text-2xl font-black">Fraud<span class="text-[#00C896]">Log</span></h1>
+            <p class="text-[9px] tracking-[0.3em] text-gray-500 uppercase font-bold">Sovereign Certification</p>
         </header>
 
-        <main class="p-6 space-y-8 flex-grow">
-            
-            <section class="space-y-4">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Atribuições do Operador</h2>
-                <div class="space-y-3">
-                    <input type="tel" id="cpf" placeholder="CPF do Entregador" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-fraudGreen outline-none transition-all">
-                    <input type="tel" id="celular" placeholder="WhatsApp para Relatório" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-fraudGreen outline-none transition-all">
-                </div>
-            </section>
-
-            <section class="space-y-3">
-                <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Prova Geográfica</h2>
-                    <div class="gps-pulse"></div>
-                </div>
-                <div id="map"></div>
-                <div class="flex justify-between text-[10px] text-slate-400 px-1 font-mono">
-                    <span id="coords">Capturando satélites...</span>
-                    <span>Precisão: ±12m</span>
-                </div>
-            </section>
-
-            <section class="bg-emerald-50/50 p-5 rounded-3xl border border-emerald-100">
-                <h2 class="text-sm font-bold text-emerald-900 mb-3">Confirmação de Recebimento</h2>
-                <label class="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" id="aceite" class="mt-1 w-5 h-5 rounded border-emerald-300 text-fraudGreen focus:ring-fraudGreen">
-                    <span class="text-xs text-emerald-800 leading-relaxed font-medium">
-                        Eu, consumidor, certifico o recebimento deste pedido e autorizo o registro das coordenadas geográficas para fins de prova irrefutável.
-                    </span>
-                </label>
-            </section>
-
-            <button onclick="gerarRelatorio()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-lg hover:bg-black active:scale-95 transition-all shadow-xl">
-                GERAR CERTIFICADO FINAL
-            </button>
-        </main>
-    </div>
-
-    <div id="modal" class="fixed inset-0 bg-black/60 z-[2000] hidden flex items-end justify-center">
-        <div class="bg-white w-full max-w-[430px] rounded-t-[2.5rem] p-8 space-y-6 shadow-2xl animate-bounce-in">
-            <div class="w-12 h-1 bg-slate-200 mx-auto rounded-full mb-2"></div>
-            <div class="text-center">
-                <div class="text-fraudGreen text-5xl mb-2">✓</div>
-                <h3 class="text-xl font-bold">Entrega Certificada</h3>
-                <p class="text-sm text-gray-500">O relatório forense foi gerado com sucesso.</p>
-            </div>
-            <div id="dadosRelatorio" class="bg-slate-50 p-5 rounded-2xl font-mono text-[11px] text-slate-600 border border-slate-100 leading-loose">
-                </div>
-            <div class="flex gap-3">
-                <button onclick="location.reload()" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-sm">Novo</button>
-                <button onclick="window.print()" class="flex-1 py-4 bg-fraudGreen text-white rounded-2xl font-bold text-sm shadow-lg shadow-emerald-200">Compartilhar</button>
-            </div>
+        <div class="space-y-4">
+            <input type="tel" id="cpf" placeholder="CPF do Entregador" class="input-white w-full p-4 rounded-xl outline-none">
+            <input type="tel" id="cel" placeholder="Celular / WhatsApp" class="input-white w-full p-4 rounded-xl outline-none">
         </div>
+
+        <div id="map"></div>
+
+        <label class="flex items-start gap-3 bg-white/5 p-4 rounded-xl border border-[#00C896]/30">
+            <input type="checkbox" id="aceite" class="mt-1 w-5 h-5">
+            <span class="text-[10px] leading-tight uppercase font-bold text-gray-300">Certifico o recebimento e autorizo registro de coordenadas FraudLog.</span>
+        </label>
+
+        <button onclick="gerar()" class="w-full bg-[#00C896] text-[#0A0F1E] py-5 rounded-xl font-black text-lg uppercase shadow-lg shadow-[#00C896]/20">
+            Gerar Certificado
+        </button>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Configuração do Mapa
-        const lat = -23.5615, lon = -46.6553;
-        const map = L.map('map', {zoomControl: false}).setView([lat, lon], 16);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        L.marker([lat, lon]).addTo(map);
-        document.getElementById('coords').innerText = lat + ", " + lon;
-
-        function gerarRelatorio() {
-            const cpf = document.getElementById('cpf').value;
-            const cel = document.getElementById('celular').value;
-            const aceite = document.getElementById('aceite').checked;
-
-            if(!cpf || !cel || !aceite) {
-                alert("Erro: Preencha todos os campos e confirme o aceite do consumidor.");
-                return;
+        const map = L.map('map', {zoomControl:false}).setView([-23.56, -46.65], 15);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+        function gerar() {
+            if(!document.getElementById('cpf').value || !document.getElementById('aceite').checked) {
+                alert("Preencha o CPF e o Aceite."); return;
             }
-
-            const ts = new Date().toLocaleString('pt-BR');
-            const hash = btoa(cpf + ts).substring(0, 16).toUpperCase();
-
-            document.getElementById('dadosRelatorio').innerHTML = `
-                <p><strong>HASH ID:</strong> FL-${hash}</p>
-                <p><strong>TIMESTAMP:</strong> ${ts}</p>
-                <p><strong>OPERADOR CPF:</strong> ${cpf}</p>
-                <p><strong>GPS:</strong> ${lat}, ${lon}</p>
-                <p><strong>STATUS:</strong> PROVA CRIPTOGRÁFICA GERADA</p>
-            `;
-
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
+            alert("Certificado Gerado com Sucesso! Protocolo: FL-" + Math.random().toString(36).toUpperCase().substring(2,12));
         }
     </script>
 </body>
