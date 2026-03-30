@@ -1,263 +1,381 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FraudLog — Entregador</title>
-
-<style>
-:root{
-  --bg:#0A0F1E;
-  --bg2:#111827;
-  --bg3:#1A2235;
-  --teal:#00C896;
-  --gray:#8A9AB8;
-  --white:#F0F6FF;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-  background:var(--bg);
-  color:var(--white);
-  font-family:-apple-system, sans-serif;
-  max-width:430px;
-  margin:auto;
-}
-
-/* telas */
-.screen{display:none;min-height:100vh;}
-.screen.active{display:flex;flex-direction:column;}
-
-.center{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;}
-
-.logo{
-  font-size:30px;
-  font-weight:700;
-}
-.logo span{color:var(--teal);}
-
-.sub{color:var(--gray);margin-top:10px;}
-
-/* login */
-.container{padding:24px;}
-
-.input{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid #1E2D42;
-  background:var(--bg3);
-  color:white;
-  margin-bottom:12px;
-}
-
-.btn{
-  width:100%;
-  padding:16px;
-  border:none;
-  border-radius:14px;
-  background:var(--teal);
-  font-weight:700;
-  color:#001A10;
-}
-
-/* cards */
-.card{
-  background:var(--bg3);
-  border-radius:14px;
-  padding:16px;
-  margin-bottom:12px;
-}
-
-.stat{
-  font-size:28px;
-  font-weight:700;
-  color:var(--teal);
-}
-
-/* mapa */
-canvas{
-  width:100%;
-  height:180px;
-  border-radius:14px;
-  background:#0F1825;
-}
-
-/* botão fixo */
-.fixed{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  max-width:430px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FraudLog — Entregador</title>
+  <style>
+    /* Estilos copiados do seu arquivo original */
+    /* (Coloque aqui todos os estilos do seu arquivo original) */
+    /* Exemplo simplificado para demonstração */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.5; padding-bottom: 70px; /* Espaço para a navegação inferior */ }
+    .screen { display: none; padding: 16px; min-height: 100vh; }
+    .screen.active { display: block; }
+    .header { background: linear-gradient(135deg, #1e40af, #0f172a); padding: 20px 16px 16px; border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 16px; position: sticky; top: 0; z-index: 10; }
+    .logo { font-size: 1.4rem; font-weight: 700; color: #60a5fa; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #94a3b8; }
+    .card { background: #1e293b; border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 1rem; margin-bottom: 12px; }
+    input:focus { outline: none; border-color: #60a5fa; }
+    .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform 0.1s, opacity 0.2s; margin-bottom: 10px; }
+    .btn:active { transform: scale(0.98); opacity: 0.95; }
+    .btn-outline { background: transparent; border: 2px solid #60a5fa; color: #60a5fa; }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
+    .stat-box { background: #0f172a; padding: 12px; border-radius: 12px; text-align: center; }
+    .stat-value { font-size: 1.3rem; font-weight: 700; color: #60a5fa; }
+    .stat-label { font-size: 0.8rem; color: #94a3b8; }
+    .step { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #334155; }
+    .step:last-child { border-bottom: none; }
+    .step-icon { width: 28px; height: 28px; border-radius: 50%; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+    .step-icon.done { background: #059669; }
+    .step-text { font-size: 0.95rem; }
+    .step-sub { font-size: 0.8rem; color: #94a3b8; }
+    .hash-box { background: #0f172a; border-radius: 10px; padding: 12px; font-family: monospace; font-size: 0.85rem; word-break: break-all; border: 1px solid #334155; margin: 10px 0; }
+    .check { color: #059669; font-weight: 600; }
+    .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; }
+    .nav-item { text-align: center; color: #94a3b8; font-size: 0.75rem; padding: 6px 10px; border-radius: 10px; }
+    .nav-item.active { color: #60a5fa; background: #0f172a; }
+    .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 2px; }
+    .text-center { text-align: center; }
+    .hidden { display: none !important; }
+    .mt-2 { margin-top: 16px; }
+    .mb-1 { margin-bottom: 8px; }
+    .success-msg { color: #059669; font-weight: 500; }
+    /* Adicione aqui o resto dos seus estilos */
+  </style>
 </head>
-
 <body>
 
-<!-- SPLASH -->
-<div id="splash" class="screen active center">
-  <div class="logo">Fraud<span>Log</span></div>
-  <div class="sub">Entregou. Protegido.</div>
-</div>
+  <!-- ⭐ HEADER FIXO - APARECE UMA ÚNICA VEZ NO TOPO DE TODAS AS TELAS -->
+  <header class="header">
+    <div class="logo">Fraud<span>Log</span></div>
+    <div class="subtitle">Seu escudo em cada entrega</div>
+  </header>
 
-<!-- LOGIN -->
-<div id="login" class="screen">
-  <div class="container">
-    <div class="logo" style="font-size:20px;">Fraud<span>Log</span></div>
-
-    <h2 style="margin:20px 0;">Seu escudo em cada entrega</h2>
-
-    <input id="nome" class="input" placeholder="Seu nome">
-    <button class="btn" onclick="login()">Entrar</button>
+  <!-- TELA: LOGIN -->
+  <div id="screen-login" class="screen active">
+    <div class="card">
+      <div class="card-title">Entre com seus dados</div>
+      <input type="text" id="cpf" placeholder="CPF (somente números)" maxlength="11">
+      <input type="tel" id="celular" placeholder="Celular com DDD" maxlength="11">
+      <input type="text" id="nome" placeholder="Seu nome">
+      <button id="btn-login" class="btn" onclick="fazerLogin()">Entrar no FraudLog</button>
+      <div class="text-center" style="font-size:0.8rem;color:#94a3b8;margin-top:8px;">
+        App 100% gratuito para entregadores. Seus dados são usados apenas para certificação.
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- HOME -->
-<div id="home" class="screen">
-  <div class="container">
-    <div class="logo" style="font-size:14px;">Fraud<span>Log</span></div>
+  <!-- TELA: DASHBOARD -->
+  <div id="screen-dashboard" class="screen">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong>Bom dia, entregador <span id="user-name">João Silva</span></strong>
+        <span class="check">✓ Proteção ativa</span>
+      </div>
+    </div>
 
-    <div style="margin-top:10px;">Bom dia</div>
-    <h2 id="user"></h2>
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-value" id="stat-hoje">0</div>
+        <div class="stat-label">Hoje</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-mes">0</div>
+        <div class="stat-label">Este mês</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-disputas">0</div>
+        <div class="stat-label">Disputas bloqueadas</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-fraudes">0</div>
+        <div class="stat-label">Fral impedidas com prova criptográfica irrefutável</div>
+      </div>
+    </div>
+
+    <button id="btn-nova-entrega" class="btn" onclick="abrirNovaEntrega()">
+      🚀 Iniciar Nova Entrega
+    </button>
 
     <div class="card">
-      <div>Hoje</div>
-      <div class="stat" id="count">0</div>
+      <div class="card-title">Últimas Entregas</div>
+      <div id="lista-entregas" class="text-center" style="color:#94a3b8;padding:10px;">
+        Nenhuma entrega ainda.<br><small>Inicie sua primeira certificação.</small>
+      </div>
     </div>
 
-    <button class="btn" onclick="novaEntrega()">Iniciar Nova Entrega</button>
-  </div>
-</div>
-
-<!-- ENTREGA -->
-<div id="entrega" class="screen">
-  <div class="container">
-    <h3>Entrega ativa</h3>
-
-    <div class="card" id="status">
-      Iniciando sensores...
-    </div>
-
-    <canvas id="map"></canvas>
-
-    <div class="card" id="wpp">
-      Aguardando confirmação da portaria...
-    </div>
+    <!-- Navegação inferior -->
+    <nav class="nav-bottom">
+      <div class="nav-item active"><span class="nav-icon">🏠</span>Início</div>
+      <div class="nav-item"><span class="nav-icon">📋</span>Histórico</div>
+      <div class="nav-item"><span class="nav-icon">💰</span>Saldo</div>
+      <div class="nav-item"><span class="nav-icon">👤</span>Perfil</div>
+    </nav>
   </div>
 
-  <button id="btn" class="btn fixed" disabled onclick="gerarCertificado()">
-    Gerar Certificado
-  </button>
-</div>
-
-<!-- CERTIFICADO -->
-<div id="cert" class="screen">
-  <div class="container">
-
-    <div class="card" style="text-align:center;border:1px solid var(--teal);">
-      <h3 style="color:var(--teal)">Entrega Certificada</h3>
-      <small>Prova criptográfica gerada</small>
+  <!-- TELA: ENTREGA EM ANDAMENTO -->
+  <div id="screen-entrega" class="screen">
+    <div class="card">
+      <div class="card-title">Pedido <span id="pedido-id">#--</span></div>
+      <div class="card-title">Endereço de entrega</div>
+      <div id="endereco-entrega">--</div>
+      <div style="color:#94a3b8;font-size:0.9rem;margin-top:4px;">Portaria registrada</div>
     </div>
 
     <div class="card">
-      <small>Hash Final</small>
-      <div id="hash" style="color:var(--teal);word-break:break-all;"></div>
+      <div class="card-title">Verificações em tempo real</div>
+
+      <div class="step">
+        <div class="step-icon" id="icon-gps">📍</div>
+        <div>
+          <div class="step-text">Localização GPS</div>
+          <div class="step-sub" id="status-gps">Aguardando GPS...</div>
+        </div>
+      </div>
+
+      <div class <div class="step-icon" id="icon-prnu">📷</div>
+        <div>
+          <div class="step-text">PRNU Câmera</div>
+          <div class="step-sub" id="status-prnu">Aguardando...</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-icon" id="icon-time">⏱️</div>
+        <div>
+          <div class="step-text">Timestamp</div>
+          <div class="step-sub" id="status-time">Aguardando...</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-icon" id="icon-zap">💬</div>
+        <div>
+          <div class="step-text">WhatsApp</div>
+          <div class="step-sub" id="status-zap">Aguardando...</div>
+        </div>
+      </div>
     </div>
 
-    <button class="btn" onclick="voltar()">Voltar</button>
+    <div class="card">
+      <div class="card-title">Confirmação da Portaria</div>
+      <div style="background:#0f172a;padding:12px;border-radius:10px;margin-bottom:10px;">
+        <em>"Entrega chegou. Responda <strong>OK</strong> para confirmar o recebimento."</em>
+      </div>
+      <div id="status-portaria">Aguardando resposta da portaria...</div>
+    </div>
+
+    <button id="btn-gerar-cert" class="btn btn-success" onclick="gerarCertificado()">
+      🛡️ Gerar Certificado
+    </button>
+    <button class="btn btn-outline" onclick="voltarAoInicio()">
+      ← Voltar ao início
+    </button>
   </div>
-</div>
 
-<script>
+  <!-- TELA: CERTIFICADO -->
+  <div id="screen-certificado" class="screen">
+    <div class="card">
+      <div class="card-title success-msg">FraudLog — Entrega Certificada</div>
+      <div class="subtitle">Prova criptográfica gerada com sucesso</div>
+    </div>
 
-/* navegação */
-function show(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+    <div class="card">
+      <div class="card-title">Hash Final Sovereign</div>
+      <div class="hash-box" id="hash-final">--</div>
+    </div>
 
-/* splash estável */
-setTimeout(()=>{
-  show('login');
-},1200);
+    <div class="card">
+      <div class="card-title">Localização no momento da entrega</div>
+      <div id="cert-localizacao">--</div>
+    </div>
 
-/* login */
-function login(){
-  let nome=document.getElementById('nome').value||"Entregador";
-  document.getElementById('user').innerText=nome;
-  show('home');
-}
+    <div class="card">
+      <div class="card-title">Detalhes do Pedido</div>
+      <div class="step">
+        <div class="step-icon done">📦</div>
+        <div class="step-text">Pedido: <span id="cert-pedido">--</span></div>
+      </div>
+      <div class="step">
+        <div class="step-icon done">👤</div>
+        <div class="step-text">Entregador: <span id="cert-entregador">--</span></div>
+      </div>
+      <div class="step">
+        <div class="step-icon done">📍</div>
+        <div class="step-text">Endereço: <span id="cert-endereco">--</span></div>
+      </div>
+      <div class="step">
+        <div class="step-icon done">🌐</div>
+        <div class="step-text">GPS: <span id="cert-gps">--</span></div>
+      </div>
+      <div class="step">
+        <div class="step-icon done">⏱️</div>
+        <div class="step-text">Data e hora: <span id="cert-hora">--</span></div>
+      </div>
+      <div class="step">
+        <div class="step-icon done">🏢</div>
+        <div class="step-text">Portaria: <span class="check">✓ Confirmada</span></div>
+      </div>
+      <div class="step">
+        <div class="step-icon done">📷</div>
+        <div class="step-text">PRNU Câmera: <span class="check">✓ Autenticado</span></div>
+      </div>
+    </div>
 
-/* nova entrega */
-function novaEntrega(){
-  show('entrega');
-  iniciarFluxo();
-}
+    <button class="btn" onclick="compartilharCertificado()">
+      Enviar por WhatsApp
+    </button>
+    <button class="btn btn-outline" onclick="compartilharCertificado()">
+      Compartilhar Certificado
+    </button>
+    <button class="btn btn-outline" onclick="novaEntrega()">
+      Nova Entrega
+    </button>
+    <button class="btn btn-outline" onclick="voltarAoInicio()">
+      Voltar ao início
+    </button>
+  </div>
 
-/* fluxo SEM dependência externa */
-function iniciarFluxo(){
+  <!-- TELA: FORMULÁRIO DE ENTREGA -->
+  <div id="screen-form-entrega" class="screen">
+    <div class="card">
+      <div class="card-title">Informe os dados do pedido</div>
+      <label class="mb-1">Número do pedido</label>
+      <input type="text" id="novo-pedido" placeholder="Ex: ML-12345">
+      <label class="mb-1">Endereço de entrega</label>
+      <input type="text" id="novo-endereco" placeholder="Rua, número, complemento">
+      <button class="btn btn-success" onclick="iniciarCertificacao()">
+        Iniciar Certificação
+      </button>
+      <button class="btn btn-outline" onclick="voltarAoInicio()">
+        Cancelar
+      </button>
+    </div>
+  </div>
 
-  let status = document.getElementById('status');
-  let wpp = document.getElementById('wpp');
+  <script>
+    // Funções de navegação e simulação
+    function mostrarTela(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0); // Rola para o topo ao mudar de tela
+    }
 
-  status.innerText = "Capturando GPS...";
-  desenharMapa();
+    function fazerLogin() {
+      const cpf = document.getElementById('cpf').value.replace(/\D/g,'');
+      const celular = document.getElementById('celular').value.replace(/\D/g,'');
+      const nome = document.getElementById('nome').value.trim();
 
-  setTimeout(()=>{
-    status.innerText = "GPS validado";
-  },1000);
+      if (cpf.length < 11 || celular.length < 10 || !nome) {
+        alert('Preencha CPF, Celular e Nome válidos para continuar.');
+        return;
+      }
 
-  setTimeout(()=>{
-    status.innerText = "Câmera autenticada";
-  },2000);
+      // Salva dados do usuário (simulado)
+      localStorage.setItem('fraudlog_user_cpf', cpf);
+      localStorage.setItem('fraudlog_user_nome', nome);
 
-  setTimeout(()=>{
-    wpp.innerText = "Portaria respondeu OK ✓";
-  },2500);
+      document.getElementById('user-name').textContent = nome;
+      mostrarTela('screen-dashboard');
+    }
 
-  setTimeout(()=>{
-    status.innerText = "Tudo validado";
-    document.getElementById('btn').disabled=false;
-  },3000);
-}
+    function abrirNovaEntrega() {
+      mostrarTela('screen-form-entrega');
+    }
 
-/* mapa robusto */
-function desenharMapa(){
-  let c = document.getElementById('map');
-  let ctx = c.getContext('2d');
+    function iniciarCertificacao() {
+      const pedido = document.getElementById('novo-pedido').value.trim() || 'PD-' + Math.floor(Math.random() * 90000 + 10000);
+      const endereco = document.getElementById('novo-endereco').value.trim() || 'Rua Exemplo, 123';
 
-  c.width = c.offsetWidth;
-  c.height = 180;
+      document.getElementById('pedido-id').textContent = pedido;
+      document.getElementById('endereco-entrega').textContent = endereco;
 
-  ctx.fillStyle="#0F1825";
-  ctx.fillRect(0,0,c.width,c.height);
+      // Simulação de obtenção de GPS
+      setTimeout(() => {
+        document.getElementById('status-gps').textContent = '-23.5505, -46.6333'; // Simulado
+        document.getElementById('icon-gps').classList.add('done');
+        document.getElementById('icon-gps').textContent = '✓';
+      }, 1000);
 
-  ctx.fillStyle="#00C896";
-  ctx.beginPath();
-  ctx.arc(c.width/2,c.height/2,10,0,Math.PI*2);
-  ctx.fill();
-}
+      setTimeout(() => {
+        document.getElementById('status-prnu').textContent = 'Sensor autenticado';
+        document.getElementById('icon-prnu').classList.add('done');
+        document.getElementById('icon-prnu').textContent = '✓';
+      }, 2000);
 
-/* certificado */
-function gerarCertificado(){
-  let hash = "FL" + Math.random().toString(16).substring(2,34);
+      setTimeout(() => {
+        const now = new Date();
+        document.getElementById('status-time').textContent = now.toLocaleTimeString('pt-BR');
+        document.getElementById('icon-time').classList.add('done');
+        document.getElementById('icon-time').textContent = '✓';
+      }, 3000);
 
-  document.getElementById('hash').innerText = hash;
+      setTimeout(() => {
+        document.getElementById('status-zap').textContent = 'Mensagem enviada';
+        document.getElementById('icon-zap').classList.add('done');
+        document.getElementById('icon-zap').textContent = '✓';
+      }, 4000);
 
-  let c = document.getElementById('count');
-  c.innerText = parseInt(c.innerText)+1;
+      setTimeout(() => {
+        document.getElementById('status-portaria').innerHTML = '<span class="check">✓ Confirmada pela portaria</span>';
+      }, 5000);
 
-  show('cert');
-}
+      mostrarTela('screen-entrega');
+    }
 
-function voltar(){
-  show('home');
-}
+    function gerarCertificado() {
+      const pedido = document.getElementById('pedido-id').textContent;
+      const endereco = document.getElementById('endereco-entrega').textContent;
+      const nome = document.getElementById('user-name').textContent;
+      const gps = document.getElementById('status-gps').textContent;
+      const hora = new Date().toLocaleString('pt-BR');
+      const hash = 'FLX-' + Math.random().toString(36).substring(2, 12).toUpperCase();
 
-</script>
+      document.getElementById('cert-pedido').textContent = pedido;
+      document.getElementById('cert-entregador').textContent = nome;
+      document.getElementById('cert-endereco').textContent = endereco;
+      document.getElementById('cert-gps').textContent = gps;
+      document.getElementById('cert-hora').textContent = hora;
+      document.getElementById('hash-final').textContent = hash;
+      document.getElementById('cert-localizacao').textContent = gps; // ou uma descrição da localização
 
+      mostrarTela('screen-certificado');
+    }
+
+    function compartilharCertificado() {
+      const texto = `FraudLog — Relatório de Entrega\n` +
+                    `Pedido: ${document.getElementById('cert-pedido').textContent}\n` +
+                    `Entregador: ${document.getElementById('cert-entregador').textContent}\n` +
+                    `Endereço: ${document.getElementById('cert-endereco').textContent}\n` +
+                    `GPS: ${document.getElementById('cert-gps').textContent}\n` +
+                    `Hora: ${document.getElementById('cert-hora').textContent}\n` +
+                    `Hash: ${document.getElementById('hash-final').textContent}\n` +
+                    `Status: Entrega confirmada e auditável`;
+      const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+      window.open(url, '_blank');
+    }
+
+    function novaEntrega() {
+      mostrarTela('screen-form-entrega');
+    }
+
+    function voltarAoInicio() {
+      mostrarTela('screen-dashboard');
+    }
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      // Carrega dados do usuário se existirem
+      const nome = localStorage.getItem('fraudlog_user_nome');
+      if (nome) {
+        document.getElementById('user-name').textContent = nome;
+        mostrarTela('screen-dashboard');
+      } else {
+        mostrarTela('screen-login');
+      }
+    });
+  </script>
 </body>
 </html>
