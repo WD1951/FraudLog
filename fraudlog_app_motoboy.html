@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
+<meta="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FraudLog</title>
 
@@ -11,7 +11,7 @@
   --grid:#0f172a;
   --card:#020617;
   --text:#e5e7eb;
-  --muted:#94a3b8; /* mais claro que #64748b → melhor legibilidade */
+  --muted:#94a3b8;
   --green:#14f1c6;
   --green2:#0fd4aa;
 }
@@ -25,7 +25,33 @@ body{
     var(--bg);
   background-size:40px 40px;
   color:var(--text);
-  line-height: 1.5;
+  line-height: .5;
+}
+
+/* HEADER FIXO (logomarca em todas as telas) */
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(2, 6, 23, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(20,241,198,0.1);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-header {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.logo-header span {
+  color: var(--green);
 }
 
 /* INTRO — ANIMAÇÃO ELEGANTE */
@@ -44,17 +70,6 @@ body{
   to{opacity:0;visibility:hidden}
 }
 
-.logo{
-  font-size:34px;
-  font-weight:800;
-  letter-spacing: -0.02em;
-  text-align: center;
-}
-
-.logo span{
-  color:var(--green);
-}
-
 .tag{
   color:var(--green);
   font-size:12px;
@@ -69,7 +84,7 @@ body{
   width:80px;
   height:80px;
   border-radius:20px;
-  background:linear-gradient(135deg,var(--green),var(--green2));
+  background:linear-gradient135deg,var(--green),var(--green2));
   box-shadow:0 0 60px rgba(20,241,198,0.6);
   margin:0 auto 20px;
   animation:glowPulse 2.2s ease-in-out infinite;
@@ -85,7 +100,8 @@ body{
 .app{
   max-width:420px;
   margin:auto;
-  padding:20px;
+  padding-top: 60px; /* espaço para o header fixo */
+  padding-bottom: 20px;
 }
 
 .screen{display:none;}
@@ -112,7 +128,7 @@ h1{
 
 /* CARD */
 .card{
-  background:rgba(2,6,23,0.8);
+  background:rgba(2,63,0.8);
   border:1px solid rgba(20,241,198,0.08);
   border-radius:20px;
   padding:20px;
@@ -128,7 +144,7 @@ input{
   border-radius:12px;
   border:1px solid rgba(255,255,255,0.08);
   background:#020617;
-  color:#e5e7eb; /* branco suave, mais claro que antes */
+  color:#e5e7eb;
   font-size:16px;
   font-weight:400;
   letter-spacing: 0.2px;
@@ -141,7 +157,7 @@ input:focus{
   box-shadow:0 0 0 4px rgba(20,241,198,0.15);
 }
 
-/* BUTTON */
+/* BUTTON — EFEITO DE CLICK */
 button{
   width:100%;
   margin-top:16px;
@@ -155,6 +171,14 @@ button{
   box-shadow:0 10px 30px rgba(20,241,198,0.25);
   font-size:16px;
   letter-spacing: 0.5px;
+  /* Efeito de click */
+  transition: all 0.18s ease;
+}
+
+button:active {
+  transform: translateY(2px);
+  box-shadow: 0 6px 20px rgba(20,241,198,0.2);
+  opacity: 0.94;
 }
 
 .secondary{
@@ -225,10 +249,17 @@ button{
 
 <body>
 
+<!-- HEADER FIXO — APARECE EM TODAS AS TELAS -->
+<div class="header-fixed">
+  <div class="logo-header">Fraud<span>Log</span></div>
+  <div style="width:24px;"></div> <!-- espaço para alinhamento -->
+</div>
+
+<!-- INTRO -->
 <div class="intro">
   <div style="text-align:center">
     <div class="glow"></div>
-    <div class="logo">Fraud<span>Log</span></div>
+    <div class="logo-header">Fraud<span>Log</span></div>
     <p class="sub">Cada entrega é uma prova irrefutável.</p>
   </div>
 </div>
@@ -239,9 +270,7 @@ button{
 <div id="login" class="screen active fade">
   <div class="tag">CERTIFICAÇÃO DE ENTREGAS</div>
 
-  <h1>
-    Cada entrega é uma prova irrefutável.
-  </h1>
+  <h1>Cada entrega é uma prova irref.</h1>
 
   <p class="sub">O motoboy protegido garante a confiança da cooperativa e do cliente.</p>
 
@@ -304,7 +333,7 @@ button{
 </div>
 
 <!-- CERT -->
-<div id="cert" class="screen fade">
+<div="cert" class="screen fade">
   <h1>Entrega validada</h1>
 
   <div class="card">
@@ -312,7 +341,7 @@ button{
     <div class="hash" id="hash"></div>
 
     <div class="info-list">
-      <div class="info">
+      <div">
         <div class="info-label">Pedido:</div>
         <div class="info-value" id="cert-pedido">-</div>
       </div>
@@ -371,8 +400,7 @@ function nova(){
         document.getElementById("gps-info").innerText = `${dadosEntrega.gps.lat}, ${dadosEntrega.gps.lng}`;
       },
       (error) => {
-        console.warn("GPS não disponível — usando fallback");
-        dadosEntrega.gps = { lat: -23.5505, lng: -46.6333 };
+        console.warn("GPS não disponível — usando        dadosEntrega.gps = { lat: -23.5505, lng: -46.6333 };
         document.getElementById("gps-info").innerText = `${dadosEntrega.gps.lat}, ${dadosEntrega.gps.lng}`;
       },
       { enableHighAccuracy: true, timeout: 10000 }
