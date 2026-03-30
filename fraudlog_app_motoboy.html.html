@@ -1,980 +1,487 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0A0E1A">
-<title>FraudLog — App do Entregador</title>
-<style>
-:root {
-  --bg: #0A0E1A;
-  --bg2: #111827;
-  --bg3: #1C2333;
-  --teal: #00D4A0;
-  --teal2: #00A880;
-  --teal3: #004D3A;
-  --teal-glow: rgba(0,212,160,0.15);
-  --red: #FF4757;
-  --amber: #FFB347;
-  --white: #F0F4FF;
-  --gray: #6B7A99;
-  --gray2: #2A3347;
-  --mono: 'Courier New', 'Courier', monospace;
-  --sans: -apple-system, 'Helvetica Neue', sans-serif;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FraudLog — Entregador</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a; color: #e2e8f0; line-height: 1.5;
+      padding: 0; margin: 0; padding-bottom: 70px;
+    }
+    .screen { display: none; padding: 16px; min-height: 100vh; }
+    .screen.active { display: block; }
+    
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1e40af, #0f172a);
+      padding: 20px 16px 16px; border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 16px;
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: #60a5fa; margin-bottom: 4px; }
+    .subtitle { font-size: 0.95rem; color: #94a3b8; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    /* Cards */
+    .card {
+      background: #1e293b; border-radius: 16px; padding: 16px;
+      margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .card-title { font-weight: 600; margin-bottom: 8px; color: #f1f5f9; }
 
-body {
-  background: var(--bg);
-  color: var(--white);
-  font-family: var(--sans);
-  min-height: 100vh;
-  max-width: 430px;
-  margin: 0 auto;
-  overflow-x: hidden;
-  position: relative;
-}
+    /* Forms */
+    input {
+      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155;
+      background: #0f172a; color: #fff; font-size: 1rem; margin-bottom: 12px;
+    }
+    input:focus { outline: none; border-color: #60a5fa; }
 
-/* ── SCREENS ── */
-.screen { display: none; min-height: 100vh; flex-direction: column; animation: fadeIn .3s ease; }
-.screen.active { display: flex; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    /* Buttons */
+    .btn {
+      width: 100%; padding: 14px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white; font-weight: 600; font-size: 1rem;
+      cursor: pointer; transition: transform 0.1s, opacity 0.2s;
+      margin-bottom: 10px;
+    }
+    .btn:active { transform: scale(0.98); opacity: 0.95; }
+    .btn-outline {
+      background: transparent; border: 2px solid #60a5fa; color: #60a5fa;
+    }
+    .btn-success { background: linear-gradient(135deg, #059669, #047857); }
+    .btn-sm { padding: 10px 14px; font-size: 0.9rem; width: auto; }
 
-/* ── SPLASH ── */
-#splash {
-  background: var(--bg);
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0;
-}
-.splash-logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  animation: logoIn .8s cubic-bezier(.16,1,.3,1) both;
-}
-@keyframes logoIn { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
-.logo-icon {
-  width: 72px; height: 72px;
-  background: var(--teal-glow);
-  border: 1.5px solid var(--teal);
-  border-radius: 20px;
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  box-shadow: 0 0 40px rgba(0,212,160,.25);
-}
-.logo-icon svg { width: 36px; height: 36px; }
-.logo-name {
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -1px;
-  color: var(--white);
-}
-.logo-name span { color: var(--teal); }
-.logo-tagline {
-  font-size: 12px;
-  color: var(--gray);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  margin-top: -8px;
-}
-.splash-progress {
-  width: 120px; height: 2px;
-  background: var(--gray2);
-  border-radius: 2px;
-  margin-top: 48px;
-  overflow: hidden;
-}
-.splash-bar {
-  height: 100%;
-  background: var(--teal);
-  border-radius: 2px;
-  animation: loadBar 1.8s ease forwards;
-}
-@keyframes loadBar { from { width: 0%; } to { width: 100%; } }
+    /* Stats Grid */
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0; }
+    .stat-box {
+      background: #0f172a; padding: 12px; border-radius: 12px; text-align: center;
+    }
+    .stat-value { font-size: 1.3rem; font-weight: 700; color: #60a5fa; }
+    .stat-label { font-size: 0.8rem; color: #94a3b8; }
 
-/* ── LOGIN ── */
-#login { padding: 0; }
-.login-header {
-  padding: 60px 28px 32px;
-  background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
-}
-.login-title {
-  font-family: var(--mono);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 8px;
-}
-.login-title span { color: var(--teal); }
-.login-sub { font-size: 14px; color: var(--gray); line-height: 1.6; }
-.login-body { padding: 32px 28px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
-.field-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
-.field-input {
-  width: 100%;
-  background: var(--bg3);
-  border: 1.5px solid var(--gray2);
-  border-radius: 12px;
-  padding: 16px 18px;
-  font-family: var(--mono);
-  font-size: 16px;
-  color: var(--white);
-  outline: none;
-  transition: border-color .2s;
-}
-.field-input:focus { border-color: var(--teal); }
-.field-input::placeholder { color: var(--gray); font-family: var(--sans); font-size: 14px; }
-.btn-primary {
-  width: 100%;
-  background: var(--teal);
-  color: #001A12;
-  font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 14px;
-  padding: 18px;
-  cursor: pointer;
-  transition: transform .15s, box-shadow .15s;
-  margin-top: 8px;
-}
-.btn-primary:active { transform: scale(.97); }
-.btn-primary:hover { box-shadow: 0 0 24px rgba(0,212,160,.35); }
-.login-note { font-size: 12px; color: var(--gray); text-align: center; line-height: 1.6; }
+    /* Delivery Flow */
+    .step {
+      display: flex; align-items: center; gap: 10px; padding: 10px 0;
+      border-bottom: 1px solid #334155;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #334155; display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; flex-shrink: 0;
+    }
+    .step-icon.done { background: #059669; }
+    .step-text { font-size: 0.95rem; }
+    .step-sub { font-size: 0.8rem; color: #94a3b8; }
 
-/* ── HOME ── */
-#home { padding-bottom: 80px; }
-.home-header {
-  background: var(--bg2);
-  padding: 52px 24px 24px;
-  border-bottom: 1px solid var(--gray2);
-}
-.home-greeting { font-size: 13px; color: var(--gray); margin-bottom: 4px; }
-.home-name { font-family: var(--mono); font-size: 22px; font-weight: 700; }
-.home-name span { color: var(--teal); }
-.status-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(0,212,160,.1);
-  border: 1px solid var(--teal3);
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 12px;
-  color: var(--teal);
-  margin-top: 12px;
-}
-.status-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+    /* Certificate */
+    .hash-box {
+      background: #0f172a; border-radius: 10px; padding: 12px;
+      font-family: monospace; font-size: 0.85rem; word-break: break-all;
+      border: 1px solid #334155; margin: 10px 0;
+    }
+    .check { color: #059669; font-weight: 600; }
 
-.home-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 20px 20px 0;
-}
-.stat-card {
-  background: var(--bg3);
-  border: 1px solid var(--gray2);
-  border-radius: 16px;
-  padding: 18px 16px;
-}
-.stat-card.teal { border-color: var(--teal3); background: rgba(0,212,160,.06); }
-.stat-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
-.stat-value { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--white); }
-.stat-value.teal { color: var(--teal); }
-.stat-sub { font-size: 11px; color: var(--gray); margin-top: 4px; }
+    /* Bottom Nav */
+    .nav-bottom {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #1e293b; display: flex; justify-content: space-around;
+      padding: 10px 0; border-top: 1px solid #334155;
+    }
+    .nav-item {
+      text-align: center; color: #94a3b8; font-size: 0.75rem;
+      padding: 6px 10px; border-radius: 10px;
+    }
+    .nav-item.active { color: #60a5fa; background: #0f172a; }
+    .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 2px; }
 
-.section-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--gray);
-  padding: 24px 20px 12px;
-}
-
-.btn-entrega {
-  margin: 0 20px;
-  background: var(--teal);
-  color: #001A12;
-  font-family: var(--sans);
-  font-size: 17px;
-  font-weight: 700;
-  border: none;
-  border-radius: 16px;
-  padding: 20px;
-  cursor: pointer;
-  width: calc(100% - 40px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: transform .15s, box-shadow .15s;
-  box-shadow: 0 8px 32px rgba(0,212,160,.3);
-}
-.btn-entrega:active { transform: scale(.97); }
-.btn-entrega svg { width: 22px; height: 22px; }
-
-.entry-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
-.entry-card {
-  background: var(--bg3);
-  border: 1px solid var(--gray2);
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  transition: border-color .2s;
-}
-.entry-card:active { border-color: var(--teal); }
-.entry-icon {
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.entry-icon.ok { background: rgba(0,212,160,.12); }
-.entry-icon.pend { background: rgba(255,179,71,.12); }
-.entry-icon.fail { background: rgba(255,71,87,.12); }
-.entry-info { flex: 1; }
-.entry-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-.entry-meta { font-size: 12px; color: var(--gray); }
-.entry-hash {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--teal);
-  background: rgba(0,212,160,.08);
-  padding: 3px 7px;
-  border-radius: 5px;
-}
-
-/* ── ENTREGA ATIVA ── */
-#entrega { background: var(--bg); }
-.entrega-header {
-  background: var(--bg2);
-  padding: 52px 24px 20px;
-  border-bottom: 1px solid var(--gray2);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.btn-back {
-  width: 38px; height: 38px;
-  background: var(--bg3);
-  border: 1px solid var(--gray2);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.entrega-header-info { flex: 1; }
-.entrega-header-title { font-family: var(--mono); font-size: 16px; font-weight: 700; }
-.entrega-header-sub { font-size: 12px; color: var(--gray); margin-top: 2px; }
-
-.entrega-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
-
-.address-card {
-  background: var(--bg3);
-  border: 1px solid var(--gray2);
-  border-radius: 16px;
-  padding: 18px;
-}
-.address-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
-.address-text { font-size: 16px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
-.address-ref { font-size: 13px; color: var(--gray); }
-
-.sensors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.sensor-card {
-  background: var(--bg3);
-  border: 1.5px solid var(--gray2);
-  border-radius: 14px;
-  padding: 14px;
-  transition: border-color .3s;
-}
-.sensor-card.active { border-color: var(--teal); background: rgba(0,212,160,.06); }
-.sensor-icon { width: 32px; height: 32px; margin-bottom: 8px; }
-.sensor-name { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
-.sensor-status { font-family: var(--mono); font-size: 13px; font-weight: 700; }
-.sensor-status.ok { color: var(--teal); }
-.sensor-status.wait { color: var(--amber); }
-
-.whatsapp-card {
-  background: var(--bg3);
-  border: 1px solid var(--gray2);
-  border-radius: 16px;
-  padding: 18px;
-}
-.wz-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.wz-icon { width: 36px; height: 36px; background: #1A3A2A; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-.wz-title { font-size: 14px; font-weight: 600; }
-.wz-sub { font-size: 12px; color: var(--gray); }
-.wz-msg {
-  background: var(--bg2);
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--gray);
-  border-left: 3px solid #25D366;
-}
-.wz-waiting {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--amber);
-}
-.wz-dots span {
-  display: inline-block;
-  width: 5px; height: 5px;
-  background: var(--amber);
-  border-radius: 50%;
-  animation: dots 1.4s infinite;
-}
-.wz-dots span:nth-child(2) { animation-delay: .2s; }
-.wz-dots span:nth-child(3) { animation-delay: .4s; }
-@keyframes dots { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
-
-.btn-certify {
-  background: var(--teal);
-  color: #001A12;
-  font-family: var(--sans);
-  font-size: 17px;
-  font-weight: 700;
-  border: none;
-  border-radius: 16px;
-  padding: 20px;
-  cursor: pointer;
-  width: 100%;
-  transition: transform .15s, box-shadow .15s;
-  box-shadow: 0 8px 32px rgba(0,212,160,.3);
-  margin-top: auto;
-}
-.btn-certify:disabled {
-  background: var(--gray2);
-  color: var(--gray);
-  box-shadow: none;
-  cursor: not-allowed;
-}
-.btn-certify:not(:disabled):active { transform: scale(.97); }
-
-/* ── CERTIFICADO ── */
-#certificado { background: var(--bg); }
-.cert-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
-
-.cert-success {
-  background: rgba(0,212,160,.08);
-  border: 1.5px solid var(--teal);
-  border-radius: 20px;
-  padding: 28px 20px;
-  text-align: center;
-}
-.cert-check {
-  width: 64px; height: 64px;
-  background: rgba(0,212,160,.15);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 16px;
-}
-.cert-title { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--teal); margin-bottom: 6px; }
-.cert-sub { font-size: 14px; color: var(--gray); }
-
-.cert-hash-card {
-  background: var(--bg3);
-  border: 1px solid var(--gray2);
-  border-radius: 16px;
-  padding: 18px;
-}
-.cert-hash-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
-.cert-hash-value {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--teal);
-  word-break: break-all;
-  line-height: 1.8;
-  background: rgba(0,212,160,.06);
-  padding: 12px;
-  border-radius: 10px;
-}
-
-.cert-details { display: flex; flex-direction: column; gap: 0; background: var(--bg3); border: 1px solid var(--gray2); border-radius: 16px; overflow: hidden; }
-.cert-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 13px 16px;
-  border-bottom: 1px solid var(--gray2);
-  font-size: 13px;
-}
-.cert-row:last-child { border-bottom: none; }
-.cert-row-label { color: var(--gray); }
-.cert-row-value { font-weight: 500; font-family: var(--mono); font-size: 12px; text-align: right; }
-.cert-row-value.teal { color: var(--teal); }
-
-.btn-share {
-  background: var(--bg3);
-  color: var(--white);
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 600;
-  border: 1.5px solid var(--gray2);
-  border-radius: 14px;
-  padding: 16px;
-  cursor: pointer;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: border-color .2s;
-}
-.btn-share:active { border-color: var(--teal); }
-.btn-voltar {
-  background: transparent;
-  color: var(--teal);
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 600;
-  border: 1.5px solid var(--teal3);
-  border-radius: 14px;
-  padding: 16px;
-  cursor: pointer;
-  width: 100%;
-  transition: background .2s;
-}
-.btn-voltar:active { background: var(--teal-glow); }
-
-/* ── BOTTOM NAV ── */
-.bottom-nav {
-  position: fixed;
-  bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  background: var(--bg2);
-  border-top: 1px solid var(--gray2);
-  display: flex;
-  padding: 8px 0 20px;
-  z-index: 100;
-}
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 8px 0;
-  opacity: .45;
-  transition: opacity .2s;
-}
-.nav-item.active { opacity: 1; }
-.nav-item svg { width: 22px; height: 22px; }
-.nav-label { font-size: 10px; font-weight: 500; letter-spacing: .04em; }
-.nav-item.active .nav-label { color: var(--teal); }
-.nav-item.active svg { stroke: var(--teal); }
-
-/* ── MODAL PEDIDO ── */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  z-index: 200;
-  align-items: flex-end;
-  justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-.modal-sheet {
-  background: var(--bg2);
-  border-radius: 24px 24px 0 0;
-  padding: 24px 24px 40px;
-  width: 100%;
-  max-width: 430px;
-  animation: slideUp .3s cubic-bezier(.16,1,.3,1);
-}
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.modal-handle { width: 40px; height: 4px; background: var(--gray2); border-radius: 2px; margin: 0 auto 20px; }
-.modal-title { font-family: var(--mono); font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-.modal-sub { font-size: 13px; color: var(--gray); margin-bottom: 20px; }
-</style>
+    /* Utility */
+    .hidden { display: none !important; }
+    .text-center { text-align: center; }
+    .mt-2 { margin-top: 16px; }
+    .mb-1 { margin-bottom: 8px; }
+    .success-msg { color: #059669; font-weight: 500; }
+  </style>
 </head>
 <body>
 
-<!-- SPLASH -->
-<div id="splash" class="screen active">
-  <div class="splash-logo">
-    <div class="logo-icon">
-      <svg viewBox="0 0 36 36" fill="none">
-        <path d="M18 4L6 10V20C6 26.6 11.4 32.6 18 34C24.6 32.6 30 26.6 30 20V10L18 4Z" stroke="#00D4A0" stroke-width="1.5" stroke-linejoin="round"/>
-        <path d="M13 18L16.5 21.5L23 15" stroke="#00D4A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div class="logo-name">Fraud<span>Log</span></div>
-    <div class="logo-tagline">Entregou. Protegido.</div>
-  </div>
-  <div class="splash-progress"><div class="splash-bar"></div></div>
-</div>
-
-<!-- LOGIN -->
-<div id="login" class="screen">
-  <div class="login-header">
-    <div style="font-family:var(--mono);font-size:20px;font-weight:700;margin-bottom:20px;">Fraud<span style="color:var(--teal)">Log</span></div>
-    <div class="login-title">Seu escudo em<br><span>cada entrega</span></div>
-    <div class="login-sub" style="margin-top:8px;">Entre com seus dados para começar a certificar e proteger suas entregas.</div>
-  </div>
-  <div class="login-body">
-    <div>
-      <div class="field-label">CPF</div>
-      <input class="field-input" id="cpf" type="tel" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
-    </div>
-    <div>
-      <div class="field-label">Celular</div>
-      <input class="field-input" id="cel" type="tel" placeholder="(11) 99999-9999" maxlength="15" oninput="maskPhone(this)">
-    </div>
-    <button class="btn-primary" onclick="doLogin()">Entrar no FraudLog</button>
-    <div class="login-note">App gratuito para entregadores. Seus dados são usados apenas para certificação de entregas.</div>
-  </div>
-</div>
-
-<!-- HOME -->
-<div id="home" class="screen">
-  <div class="home-header">
-    <div class="home-greeting">Bom dia, entregador</div>
-    <div class="home-name">João <span>Silva</span></div>
-    <div class="status-pill"><div class="status-dot"></div>App ativo — proteção ligada</div>
-  </div>
-
-  <div class="home-stats">
-    <div class="stat-card teal">
-      <div class="stat-label">Hoje</div>
-      <div class="stat-value teal" id="count-hoje">0</div>
-      <div class="stat-sub">entregas certificadas</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Este mês</div>
-      <div class="stat-value" id="count-mes">0</div>
-      <div class="stat-sub">certificações geradas</div>
-    </div>
-    <div class="stat-card" style="grid-column:1/-1;">
-      <div class="stat-label">Disputas bloqueadas</div>
-      <div class="stat-value" id="count-disputas" style="font-size:22px;">0 fraudes impedidas</div>
-      <div class="stat-sub">com prova criptográfica irrefutável</div>
+  <!-- TELA: LOGIN -->
+  <div id="screen-login" class="screen active">
+    <header>
+      <div class="logo">FraudLog</div>
+      <div class="subtitle">Seu escudo em cada entrega</div>
+    </header>
+    <div class="card">
+      <div class="card-title">Entre com seus dados</div>
+      <input type="text" id="cpf" placeholder="CPF (somente números)" maxlength="11">
+      <input type="tel" id="celular" placeholder="Celular com DDD" maxlength="11">
+      <button id="btn-login" class="btn" ontouchstart="handleTouch(event)" onclick="fazerLogin()">Entrar no FraudLog</button>
+      <div class="text-center" style="font-size:0.8rem;color:#94a3b8;margin-top:8px;">
+        App gratuito • Dados usados apenas para certificação
+      </div>
     </div>
   </div>
 
-  <div style="padding: 0 20px; margin-top: 20px;">
-    <button class="btn-entrega" onclick="iniciarEntrega()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#001A12" stroke-width="2.5" stroke-linecap="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        <path d="M9 12l2 2 4-4"/>
-      </svg>
-      Iniciar Nova Entrega
+  <!-- TELA: DASHBOARD -->
+  <div id="screen-dashboard" class="screen">
+    <header>
+      <div class="logo">Bom dia, entregador</div>
+      <div class="subtitle" id="user-name">João Silva</div>
+    </header>
+    
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong>App ativo — proteção ligada</strong>
+        <span class="check">✓ Online</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-value" id="stat-hoje">0</div>
+        <div class="stat-label">Hoje</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-mes">0</div>
+        <div class="stat-label">Este mês</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-disputas">0</div>
+        <div class="stat-label">Disputas bloqueadas</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-fraudes">0</div>
+        <div class="stat-label">Fraudes impedidas</div>
+      </div>
+    </div>
+
+    <button id="btn-nova-entrega" class="btn" ontouchstart="handleTouch(event)" onclick="abrirNovaEntrega()">
+      🚀 Iniciar Nova Entrega
     </button>
-  </div>
 
-  <div class="section-title">Últimas Entregas</div>
-  <div class="entry-list" id="entry-list">
-    <div style="text-align:center;padding:32px 0;color:var(--gray);font-size:14px;">
-      Nenhuma entrega ainda.<br>Inicie sua primeira certificação.
-    </div>
-  </div>
-
-  <div class="bottom-nav">
-    <div class="nav-item active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
-      <span class="nav-label">Início</span>
-    </div>
-    <div class="nav-item" onclick="showHistorico()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      <span class="nav-label">Histórico</span>
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-      <span class="nav-label">Saldo</span>
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="nav-label">Perfil</span>
-    </div>
-  </div>
-</div>
-
-<!-- ENTREGA ATIVA -->
-<div id="entrega" class="screen">
-  <div class="entrega-header">
-    <div class="btn-back" onclick="goHome()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    </div>
-    <div class="entrega-header-info">
-      <div class="entrega-header-title">Entrega em andamento</div>
-      <div class="entrega-header-sub" id="pedido-num">Pedido #ML-00000</div>
-    </div>
-  </div>
-
-  <div class="entrega-body">
-    <div class="address-card">
-      <div class="address-label">Endereço de entrega</div>
-      <div class="address-text" id="end-text">Rua das Flores, 142 — Apto 82</div>
-      <div class="address-ref" id="end-ref">Torre B · Porteiro disponível</div>
-    </div>
-
-    <div class="sensors-grid">
-      <div class="sensor-card" id="gps-card">
-        <svg class="sensor-icon" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="4" stroke="#6B7A99" stroke-width="1.5"/>
-          <path d="M16 2v4M16 26v4M2 16h4M26 16h4" stroke="#6B7A99" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div class="sensor-name">GPS</div>
-        <div class="sensor-status wait" id="gps-status">Aguardando...</div>
-      </div>
-      <div class="sensor-card" id="cam-card">
-        <svg class="sensor-icon" viewBox="0 0 32 32" fill="none">
-          <rect x="2" y="8" width="28" height="20" rx="3" stroke="#6B7A99" stroke-width="1.5"/>
-          <circle cx="16" cy="18" r="5" stroke="#6B7A99" stroke-width="1.5"/>
-          <path d="M10 8V6a2 2 0 012-2h8a2 2 0 012 2v2" stroke="#6B7A99" stroke-width="1.5"/>
-        </svg>
-        <div class="sensor-name">PRNU Câmera</div>
-        <div class="sensor-status wait" id="cam-status">Aguardando...</div>
-      </div>
-      <div class="sensor-card" id="ts-card">
-        <svg class="sensor-icon" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="12" stroke="#6B7A99" stroke-width="1.5"/>
-          <path d="M16 8v8l5 3" stroke="#6B7A99" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <div class="sensor-name">Timestamp</div>
-        <div class="sensor-status wait" id="ts-status">Aguardando...</div>
-      </div>
-      <div class="sensor-card" id="wz-sensor-card">
-        <svg class="sensor-icon" viewBox="0 0 32 32" fill="none">
-          <path d="M16 3C9 3 3 9 3 16c0 2.5.7 4.8 2 6.8L3 29l6.4-2c1.9 1.1 4.1 1.7 6.6 1.7 7 0 13-6 13-13S23 3 16 3z" stroke="#6B7A99" stroke-width="1.5"/>
-        </svg>
-        <div class="sensor-name">WhatsApp</div>
-        <div class="sensor-status wait" id="wz-status">Aguardando...</div>
+    <div class="card">
+      <div class="card-title">Últimas Entregas</div>
+      <div id="lista-entregas" class="text-center" style="color:#94a3b8;padding:10px;">
+        Nenhuma entrega ainda.<br><small>Inicie sua primeira certificação.</small>
       </div>
     </div>
 
-    <div class="whatsapp-card">
-      <div class="wz-header">
-        <div class="wz-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.06-1.35A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.93 14.07c-.2.57-1.17 1.1-1.62 1.16-.44.07-.99.1-1.6-.1-.37-.12-.85-.28-1.46-.55-2.57-1.11-4.25-3.7-4.38-3.87-.13-.17-1.07-1.42-1.07-2.71 0-1.29.68-1.93.92-2.19.24-.26.52-.33.7-.33.17 0 .35 0 .5.01.16.01.38-.06.6.46.22.52.75 1.83.82 1.97.07.13.11.29.02.47-.09.17-.13.28-.26.43-.13.15-.27.34-.39.46-.13.12-.26.26-.11.5.15.25.65 1.07 1.4 1.74.96.85 1.77 1.11 2.02 1.23.25.12.4.1.54-.06.15-.17.62-.72.78-.97.16-.25.33-.21.55-.13.22.08 1.4.66 1.64.78.24.12.4.18.46.28.06.1.06.57-.14 1.14z"/></svg>
-        </div>
+    <!-- Navegação inferior -->
+    <nav class="nav-bottom">
+      <div class="nav-item active"><span class="nav-icon">🏠</span>Início</div>
+      <div class="nav-item"><span class="nav-icon">📋</span>Histórico</div>
+      <div class="nav-item"><span class="nav-icon">💰</span>Saldo</div>
+      <div class="nav-item"><span class="nav-icon">👤</span>Perfil</div>
+    </nav>
+  </div>
+
+  <!-- TELA: ENTREGA EM ANDAMENTO -->
+  <div id="screen-entrega" class="screen">
+    <header>
+      <div class="logo">Entrega em andamento</div>
+      <div class="subtitle" id="pedido-id">Pedido #ML-00000</div>
+    </header>
+
+    <div class="card">
+      <div class="card-title">Endereço de entrega</div>
+      <div id="endereco-entrega" style="font-size:1.05rem;">Rua das Flores, 142 — Apto 82</div>
+      <div style="color:#94a3b8;font-size:0.9rem;margin-top:4px;">Torre B · Porteiro disponível</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Verificações em tempo real</div>
+      
+      <div class="step">
+        <div class="step-icon" id="icon-gps">📍</div>
         <div>
-          <div class="wz-title">Confirmação da Portaria</div>
-          <div class="wz-sub" id="wz-portaria-num">Portaria · Aguardando</div>
+          <div class="step-text">GPS</div>
+          <div class="step-sub" id="status-gps">Aguardando...</div>
         </div>
       </div>
-      <div class="wz-msg" id="wz-msg-preview">
-        "Entrega para o <strong>Apto 82</strong>. Responda <strong>OK</strong> para confirmar o recebimento."
+      
+      <div class="step">
+        <div class="step-icon" id="icon-prnu">📷</div>
+        <div>
+          <div class="step-text">PRNU Câmera</div>
+          <div class="step-sub" id="status-prnu">Aguardando...</div>
+        </div>
       </div>
-      <div class="wz-waiting" id="wz-waiting-indicator">
-        <div class="wz-dots"><span></span><span></span><span></span></div>
-        Aguardando resposta da portaria...
+      
+      <div class="step">
+        <div class="step-icon" id="icon-time">⏱️</div>
+        <div>
+          <div class="step-text">Timestamp</div>
+          <div class="step-sub" id="status-time">Aguardando...</div>
+        </div>
+      </div>
+      
+      <div class="step">
+        <div class="step-icon" id="icon-zap">💬</div>
+        <div>
+          <div class="step-text">WhatsApp</div>
+          <div class="step-sub" id="status-zap">Aguardando...</div>
+        </div>
       </div>
     </div>
 
-    <button class="btn-certify" id="btn-certify" disabled onclick="gerarCertificado()">
-      Gerar Certificado
+    <div class="card">
+      <div class="card-title">Confirmação da Portaria</div>
+      <div style="background:#0f172a;padding:12px;border-radius:10px;margin-bottom:10px;">
+        <em>"Entrega para o <strong>Apto 82</strong>. Responda <strong>OK</strong> para confirmar o recebimento."</em>
+      </div>
+      <div id="status-portaria" style="color:#94a3b8;">Aguardando resposta da portaria...</div>
+    </div>
+
+    <button id="btn-gerar-cert" class="btn btn-success" ontouchstart="handleTouch(event)" onclick="gerarCertificado()">
+      🛡️ Gerar Certificado
+    </button>
+    <button class="btn btn-outline" ontouchstart="handleTouch(event)" onclick="voltarAoInicio()">
+      ← Voltar ao início
     </button>
   </div>
-</div>
 
-<!-- CERTIFICADO -->
-<div id="certificado" class="screen">
-  <div class="entrega-header">
-    <div class="btn-back" onclick="goHome()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    </div>
-    <div class="entrega-header-info">
-      <div class="entrega-header-title">Certificado gerado</div>
-      <div class="entrega-header-sub">Hash Final Sovereign</div>
-    </div>
-  </div>
+  <!-- TELA: CERTIFICADO -->
+  <div id="screen-certificado" class="screen">
+    <header>
+      <div class="logo success-msg">✓ Entrega Certificada</div>
+      <div class="subtitle">Prova criptográfica gerada com sucesso</div>
+    </header>
 
-  <div class="cert-body">
-    <div class="cert-success">
-      <div class="cert-check">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00D4A0" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
-      </div>
-      <div class="cert-title">Entrega Certificada</div>
-      <div class="cert-sub">Prova criptográfica gerada com sucesso</div>
+    <div class="card">
+      <div class="card-title">Hash Final Sovereign</div>
+      <div class="hash-box" id="hash-final">FL-7f3a9c2e4b8d1f6a...e821</div>
     </div>
 
-    <div class="cert-hash-card">
-      <div class="cert-hash-label">Hash Final Sovereign</div>
-      <div class="cert-hash-value" id="cert-hash">FL-7f3a9c2e4b8d1f6a...e821</div>
-    </div>
-
-    <div class="cert-details">
-      <div class="cert-row">
-        <span class="cert-row-label">Pedido</span>
-        <span class="cert-row-value teal" id="cert-pedido">#ML-00000</span>
+    <div class="card">
+      <div class="card-title">Resumo da Certificação</div>
+      <div class="step">
+        <div class="step-icon done">✓</div>
+        <div class="step-text">Pedido <strong id="cert-pedido">#ML-00000</strong></div>
       </div>
-      <div class="cert-row">
-        <span class="cert-row-label">Endereço</span>
-        <span class="cert-row-value" id="cert-end" style="max-width:180px;">Rua das Flores, 142</span>
+      <div class="step">
+        <div class="step-icon done">✓</div>
+        <div class="step-text">Endereço: <span id="cert-endereco">Rua das Flores, 142</span></div>
       </div>
-      <div class="cert-row">
-        <span class="cert-row-label">GPS</span>
-        <span class="cert-row-value teal" id="cert-gps">-23.5489, -46.6388</span>
+      <div class="step">
+        <div class="step-icon done">✓</div>
+        <div class="step-text">GPS: <span id="cert-gps">-23.5489, -46.6388</span></div>
       </div>
-      <div class="cert-row">
-        <span class="cert-row-label">Timestamp</span>
-        <span class="cert-row-value" id="cert-ts">--:--:--</span>
+      <div class="step">
+        <div class="step-icon done">✓</div>
+        <div class="step-text">Timestamp: <span id="cert-time">--:--:--</span></div>
       </div>
-      <div class="cert-row">
-        <span class="cert-row-label">Portaria</span>
-        <span class="cert-row-value teal">✓ Confirmada</span>
+      <div class="step">
+        <div class="step-icon done">✓</div>
+        <div class="step-text">Portaria: <span class="check">Confirmada</span></div>
       </div>
-      <div class="cert-row">
-        <span class="cert-row-label">PRNU</span>
-        <span class="cert-row-value teal">✓ Autenticado</span>
+      <div class="step">
+        <div class="step-icon done">✓</div>
+        <div class="step-text">PRNU: <span class="check">Autenticado</span></div>
       </div>
     </div>
 
-    <button class="btn-share" onclick="compartilharCert()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      Compartilhar Certificado
+    <button class="btn" ontouchstart="handleTouch(event)" onclick="compartilharCertificado()">
+      📤 Compartilhar Certificado
     </button>
-    <button class="btn-voltar" onclick="goHome()">Voltar ao início</button>
+    <button class="btn btn-outline" ontouchstart="handleTouch(event)" onclick="novaEntrega()">
+      🔄 Nova Entrega
+    </button>
   </div>
-</div>
 
-<!-- MODAL NOVA ENTREGA -->
-<div class="modal-overlay" id="modal-entrega">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Nova Entrega</div>
-    <div class="modal-sub">Informe os dados do pedido</div>
-    <div style="margin-bottom:14px;">
-      <div class="field-label">Número do pedido</div>
-      <input class="field-input" id="input-pedido" type="text" placeholder="Ex: ML-88471234" style="margin-top:8px;">
+  <!-- TELA: NOVA ENTREGA (FORM) -->
+  <div id="screen-form-entrega" class="screen">
+    <header>
+      <div class="logo">Nova Entrega</div>
+      <div class="subtitle">Informe os dados do pedido</div>
+    </header>
+    <div class="card">
+      <label class="mb-1">Número do pedido</label>
+      <input type="text" id="novo-pedido" placeholder="Ex: ML-12345">
+      <label class="mb-1">Endereço de entrega</label>
+      <input type="text" id="novo-endereco" placeholder="Rua, número, complemento">
+      <button class="btn btn-success" ontouchstart="handleTouch(event)" onclick="iniciarCertificacao()">
+        ▶ Iniciar Certificação
+      </button>
+      <button class="btn btn-outline" ontouchstart="handleTouch(event)" onclick="voltarAoInicio()">
+        Cancelar
+      </button>
     </div>
-    <div style="margin-bottom:20px;">
-      <div class="field-label">Endereço de entrega</div>
-      <input class="field-input" id="input-end" type="text" placeholder="Rua, número, apto" style="margin-top:8px;">
-    </div>
-    <button class="btn-primary" onclick="confirmarEntrega()">Iniciar Certificação</button>
-    <button onclick="fecharModal()" style="width:100%;background:none;border:none;color:var(--gray);font-size:14px;padding:14px;cursor:pointer;margin-top:4px;">Cancelar</button>
   </div>
-</div>
 
-<script>
-// ── STATE ──
-let state = {
-  entregas: [],
-  entregaAtual: null,
-  sensores: { gps: false, cam: false, ts: false, wz: false },
-  gpsReal: null,
-  timestampReal: null
-};
+  <script>
+    // ===== UTILITÁRIOS MOBILE-FRIENDLY =====
+    function handleTouch(e) {
+      // Previne delay de 300ms em alguns Android e duplicação de evento
+      if (e.type === 'touchstart') {
+        e.currentTarget.click();
+        e.preventDefault();
+      }
+    }
 
-// ── SPLASH → LOGIN ──
-// Splash com fallback seguro para iPad
-document.fonts.ready.then(() => {
-  setTimeout(() => { showScreen('login'); }, 1800);
-}).catch(() => {
-  setTimeout(() => { showScreen('login'); }, 1800);
-});
+    function mostrarTela(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+    function gerarHashSovereign() {
+      const chars = '0123456789abcdef';
+      let hash = 'FL-';
+      for (let i = 0; i < 32; i++) hash += chars[Math.floor(Math.random() * chars.length)];
+      return hash;
+    }
 
-// ── MASKS ──
-function maskCPF(el) {
-  let v = el.value.replace(/\D/g, '');
-  v = v.replace(/(\d{3})(\d)/, '$1.$2');
-  v = v.replace(/(\d{3})(\d)/, '$1.$2');
-  v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-  el.value = v;
-}
-function maskPhone(el) {
-  let v = el.value.replace(/\D/g, '');
-  v = v.replace(/^(\d{2})(\d)/, '($1) $2');
-  v = v.replace(/(\d{5})(\d)/, '$1-$2');
-  el.value = v;
-}
+    function formatarHora() {
+      const now = new Date();
+      return now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+    }
 
-// ── LOGIN ──
-function doLogin() {
-  const cpf = document.getElementById('cpf').value;
-  const cel = document.getElementById('cel').value;
-  if (cpf.length < 11 || cel.length < 14) {
-    alert('Preencha CPF e celular corretamente.');
-    return;
-  }
-  showScreen('home');
-}
+    function simularGPS() {
+      return { lat: (-23.5489 - Math.random()*0.01).toFixed(4), lng: (-46.6388 - Math.random()*0.01).toFixed(4) };
+    }
 
-// ── HOME ──
-function goHome() {
-  showScreen('home');
-  renderEntradas();
-}
+    // ===== FLUXO PRINCIPAL =====
+    function fazerLogin() {
+      const cpf = document.getElementById('cpf').value.replace(/\D/g,'');
+      const celular = document.getElementById('celular').value.replace(/\D/g,'');
+      
+      if (cpf.length < 11 || celular.length < 10) {
+        alert('Informe CPF e Celular válidos para continuar.');
+        return;
+      }
+      
+      // Salva sessão simulada
+      localStorage.setItem('fraudlog_user', JSON.stringify({ cpf, celular, nome: 'Entregador ' + cpf.slice(0,3) }));
+      document.getElementById('user-name').textContent = 'Entregador ' + cpf.slice(0,3);
+      
+      // Atualiza stats (simulado)
+      const stats = JSON.parse(localStorage.getItem('fraudlog_stats') || '{"hoje":0,"mes":0,"disputas":0,"fraudes":0}');
+      document.getElementById('stat-hoje').textContent = stats.hoje;
+      document.getElementById('stat-mes').textContent = stats.mes;
+      document.getElementById('stat-disputas').textContent = stats.disputas;
+      document.getElementById('stat-fraudes').textContent = stats.fraudes;
+      
+      mostrarTela('screen-dashboard');
+    }
 
-function renderEntradas() {
-  const list = document.getElementById('entry-list');
-  if (state.entregas.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:32px 0;color:var(--gray);font-size:14px;">Nenhuma entrega ainda.<br>Inicie sua primeira certificação.</div>';
-    return;
-  }
-  list.innerHTML = state.entregas.map(e => `
-    <div class="entry-card">
-      <div class="entry-icon ok">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4A0" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
-      </div>
-      <div class="entry-info">
-        <div class="entry-title">${e.end}</div>
-        <div class="entry-meta">${e.pedido} · ${e.hora}</div>
-      </div>
-      <div class="entry-hash">FL-${e.hash}</div>
-    </div>
-  `).join('');
-  document.getElementById('count-hoje').textContent = state.entregas.length;
-  document.getElementById('count-mes').textContent = state.entregas.length;
-  document.getElementById('count-disputas').textContent = state.entregas.length + ' fraudes impedidas';
-}
+    function abrirNovaEntrega() {
+      mostrarTela('screen-form-entrega');
+    }
 
-// ── NOVA ENTREGA ──
-function iniciarEntrega() {
-  document.getElementById('input-pedido').value = '';
-  document.getElementById('input-end').value = '';
-  document.getElementById('modal-entrega').classList.add('open');
-}
-function fecharModal() {
-  document.getElementById('modal-entrega').classList.remove('open');
-}
-function confirmarEntrega() {
-  const ped = document.getElementById('input-pedido').value || 'ML-' + Math.floor(Math.random() * 90000 + 10000);
-  const end = document.getElementById('input-end').value || 'Rua das Flores, 142 — Apto 82';
-  fecharModal();
-  state.entregaAtual = { pedido: ped, end };
-  prepararEntrega(ped, end);
-}
+    function iniciarCertificacao() {
+      const pedido = document.getElementById('novo-pedido').value.trim() || 'ML-' + Math.floor(Math.random()*90000+10000);
+      const endereco = document.getElementById('novo-endereco').value.trim() || 'Rua das Flores, 142 — Apto 82';
+      
+      document.getElementById('pedido-id').textContent = 'Pedido #' + pedido;
+      document.getElementById('endereco-entrega').textContent = endereco;
+      
+      // Inicia simulações em tempo real
+      setTimeout(() => {
+        const gps = simularGPS();
+        document.getElementById('status-gps').textContent = `${gps.lat}, ${gps.lng}`;
+        document.getElementById('icon-gps').classList.add('done');
+        document.getElementById('icon-gps').textContent = '✓';
+      }, 800);
+      
+      setTimeout(() => {
+        document.getElementById('status-prnu').textContent = 'Sensor autenticado';
+        document.getElementById('icon-prnu').classList.add('done');
+        document.getElementById('icon-prnu').textContent = '✓';
+      }, 1500);
+      
+      setTimeout(() => {
+        document.getElementById('status-time').textContent = formatarHora();
+        document.getElementById('icon-time').classList.add('done');
+        document.getElementById('icon-time').textContent = '✓';
+      }, 2200);
+      
+      setTimeout(() => {
+        document.getElementById('status-zap').textContent = 'Mensagem enviada ✓';
+        document.getElementById('icon-zap').classList.add('done');
+        document.getElementById('icon-zap').textContent = '✓';
+      }, 3000);
+      
+      setTimeout(() => {
+        document.getElementById('status-portaria').innerHTML = '<span class="check">✓ Confirmada pela portaria</span>';
+      }, 4000);
+      
+      // Salva dados para o certificado
+      localStorage.setItem('fraudlog_entrega_atual', JSON.stringify({
+        pedido, endereco, gps: simularGPS(), hora: formatarHora()
+      }));
+      
+      mostrarTela('screen-entrega');
+    }
 
-function prepararEntrega(ped, end) {
-  // Reset sensores
-  state.sensores = { gps: false, cam: false, ts: false, wz: false };
-  document.getElementById('btn-certify').disabled = true;
-  document.getElementById('pedido-num').textContent = 'Pedido #' + ped;
-  document.getElementById('end-text').textContent = end;
-  document.getElementById('end-ref').textContent = 'Portaria registrada · Aguardando confirmação';
-  document.getElementById('wz-portaria-num').textContent = '(11) 9xxxx-xxxx · Aguardando';
-  document.getElementById('wz-waiting-indicator').style.display = 'flex';
+    function gerarCertificado() {
+      const dados = JSON.parse(localStorage.getItem('fraudlog_entrega_atual') || '{}');
+      const hash = gerarHashSovereign();
+      
+      document.getElementById('hash-final').textContent = hash;
+      document.getElementById('cert-pedido').textContent = '#' + (dados.pedido || 'ML-00000');
+      document.getElementById('cert-endereco').textContent = dados.endereco || 'Rua das Flores, 142';
+      document.getElementById('cert-gps').textContent = dados.gps ? `${dados.gps.lat}, ${dados.gps.lng}` : '-23.5489, -46.6388';
+      document.getElementById('cert-time').textContent = dados.hora || formatarHora();
+      
+      // Atualiza stats
+      let stats = JSON.parse(localStorage.getItem('fraudlog_stats') || '{"hoje":0,"mes":0,"disputas":0,"fraudes":0}');
+      stats.hoje += 1; stats.mes += 1; stats.fraudes += 1;
+      localStorage.setItem('fraudlog_stats', JSON.stringify(stats));
+      
+      // Adiciona à lista de entregas
+      const lista = document.getElementById('lista-entregas');
+      if (lista.textContent.includes('Nenhuma entrega')) {
+        lista.innerHTML = '';
+      }
+      const item = document.createElement('div');
+      item.style.cssText = 'padding:10px;border-bottom:1px solid #334155;font-size:0.9rem;';
+      item.innerHTML = `<strong>#${dados.pedido || 'ML-XXXXX'}</strong><br><small>${dados.endereco || 'Endereço'}</small><br><span style="color:#059669">✓ Certificado</span>`;
+      lista.prepend(item);
+      
+      mostrarTela('screen-certificado');
+    }
 
-  ['gps','cam','ts','wz'].forEach(s => {
-    document.getElementById(s + '-card').classList.remove('active');
-    document.getElementById(s + '-status').className = 'sensor-status wait';
-    document.getElementById(s + '-status').textContent = 'Aguardando...';
-  });
+    function compartilharCertificado() {
+      const hash = document.getElementById('hash-final').textContent;
+      if (navigator.share) {
+        navigator.share({
+          title: 'Certificado FraudLog',
+          text: `Entrega certificada com hash soberano: ${hash}`,
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(hash).then(() => {
+          alert('Hash copiado para a área de transferência!');
+        });
+      }
+    }
 
-  showScreen('entrega');
-  ativarSensores();
-}
+    function novaEntrega() {
+      document.getElementById('novo-pedido').value = '';
+      document.getElementById('novo-endereco').value = '';
+      mostrarTela('screen-form-entrega');
+    }
 
-function ativarSensores() {
-  // GPS REAL — pega localização real do celular
-  if (navigator.geolocation) {
-    document.getElementById('gps-status').textContent = 'Localizando...';
-    navigator.geolocation.getCurrentPosition(
-      function(pos) {
-        const lat = pos.coords.latitude.toFixed(6);
-        const lng = pos.coords.longitude.toFixed(6);
-        const acc = Math.round(pos.coords.accuracy);
-        state.gpsReal = { lat, lng, acc };
-        ativarSensor('gps', 'GPS', lat + ', ' + lng);
-      },
-      function(err) {
-        state.gpsReal = { lat: '-23.5489', lng: '-46.6388', acc: 999 };
-        ativarSensor('gps', 'GPS', '-23.5489, -46.6388');
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  } else {
-    state.gpsReal = { lat: '-23.5489', lng: '-46.6388', acc: 999 };
-    ativarSensor('gps', 'GPS', '-23.5489, -46.6388');
-  }
+    function voltarAoInicio() {
+      mostrarTela('screen-dashboard');
+    }
 
-  // PRNU CÂMERA — autenticação do dispositivo
-  setTimeout(() => {
-    ativarSensor('cam', 'PRNU Câmera', 'Autenticado');
-  }, 1000);
-
-  // TIMESTAMP REAL — data e hora reais do dispositivo
-  setTimeout(() => {
-    const now = new Date();
-    const ts = now.toLocaleDateString('pt-BR') + ' · ' + now.toTimeString().slice(0, 8);
-    state.timestampReal = now.toISOString();
-    ativarSensor('ts', 'Timestamp', ts);
-  }, 1800);
-
-  // WHATSAPP — simulado até integração real
-  setTimeout(() => {
-    document.getElementById('wz-portaria-num').textContent = '(11) 9xxxx-xxxx · Respondeu OK';
-    document.getElementById('wz-waiting-indicator').style.display = 'none';
-    ativarSensor('wz', 'WhatsApp', 'OK recebido');
-    document.getElementById('btn-certify').disabled = false;
-  }, 4000);
-}
-
-function ativarSensor(id, nome, valor) {
-  state.sensores[id] = true;
-  const card = document.getElementById(id + '-card');
-  const status = document.getElementById(id + '-status');
-  card.classList.add('active');
-  status.className = 'sensor-status ok';
-  status.textContent = valor;
-}
-
-// ── CERTIFICADO ──
-function gerarCertificado() {
-  const hash = gerarHash();
-  const now = new Date();
-  const e = state.entregaAtual;
-
-  // Usa GPS real se capturado, senão usa fallback
-  const gpsTexto = state.gpsReal
-    ? state.gpsReal.lat + ', ' + state.gpsReal.lng
-    : '-23.5489, -46.6388';
-
-  // Timestamp real formatado
-  const tsTexto = now.toLocaleDateString('pt-BR') + ' · ' + now.toTimeString().slice(0, 8);
-
-  document.getElementById('cert-hash').textContent = 'FL-' + hash + '...e821';
-  document.getElementById('cert-pedido').textContent = '#' + e.pedido;
-  document.getElementById('cert-end').textContent = e.end;
-  document.getElementById('cert-gps').textContent = gpsTexto;
-  document.getElementById('cert-ts').textContent = tsTexto;
-
-  state.entregas.unshift({
-    pedido: e.pedido,
-    end: e.end,
-    hora: now.toTimeString().slice(0, 5),
-    hash: hash.slice(0, 8),
-    gps: gpsTexto,
-    ts: tsTexto
-  });
-
-  showScreen('certificado');
-}
-
-function gerarHash() {
-  return Math.random().toString(16).slice(2, 18);
-}
-
-function compartilharCert() {
-  alert('Certificado copiado! Cole no chat da disputa.');
-}
-
-function showHistorico() {
-  alert('Histórico completo em breve.');
-}
-</script>
+    // ===== INICIALIZAÇÃO =====
+    document.addEventListener('DOMContentLoaded', function() {
+      // Suporte extra para toque em botões (Android/Xiaomi)
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('touchstart', handleTouch, {passive: true});
+      });
+      
+      // Enter nos campos de login
+      document.getElementById('cpf')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('celular').focus();
+      });
+      document.getElementById('celular')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') fazerLogin();
+      });
+    });
+  </script>
 </body>
 </html>
