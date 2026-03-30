@@ -1,318 +1,488 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FraudLog</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FraudLog — Certificação para Cooperativas</title>
 
-<style>
-:root{
-  --bg:#020617;
-  --grid:#0f172a;
-  --card:#020617;
-  --text:#e5e7eb;
-  --muted:#64748b;
-  --green:#14f1c6;
-  --green2:#0fd4aa;
-}
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-soft: #0f172a;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --line: #334155;
+ --primary: #1d4ed8;
+      --primary-2: #2563eb;
+      --accent: #0f766e;
+      --success: #059669;
+      --shadow: 0 14px 40px rgba(15, 23, 42, 0.3);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
 
-body{
-  margin:0;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-  background:
-    linear-gradient(rgba(15,23,42,0.6) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15,23,42,0.6) 1px, transparent 1px),
-    var(--bg);
-  background-size:40px 40px;
-  color:var(--text);
-}
+    * {
+      box-sizing: border-box;
+    }
 
-/* INTRO */
-.intro{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:var(--bg);
-  z-index:999;
-  animation:fadeOut 1s ease 2.2s forwards;
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      min-height: 100%;
+    }
 
-@keyframes fadeOut{
-  to{opacity:0;visibility:hidden}
-}
+    body {
+      padding: 18px;
+    }
 
-.logo{
-  font-size:34px;
-  font-weight:800;
-}
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: calc(100vh - 36px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
 
-.logo span{
-  color:var(--green);
-}
+    .screen {
+      display: none;
+      animation: fadeUp 0.45s ease;
+    }
 
-.tag{
-  color:var(--green);
-  font-size:12px;
-  border:1px solid rgba(20,241,198,0.3);
-  padding:6px 12px;
-  border-radius:20px;
-  display:inline-block;
-  margin-bottom:20px;
-}
+    .screen.active {
+      display: block;
+    }
 
-.glow{
-  width:80px;
-  height:80px;
-  border-radius:20px;
-  background:linear-gradient(135deg,var(--green),var(--green2));
-  box-shadow:0 0 60px rgba(20,241,198,0.6);
-  margin:0 auto 20px;
-  animation:pulse 1.5s infinite;
-}
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-@keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.08)}
-  100%{transform:scale(1)}
-}
+    /* ===== LANDING PAGE (Tela Inicial) ===== */
+    .landing {
+      text-align: center;
+      padding: 24px 0;
+    }
 
-/* APP */
-.app{
-  max-width:420px;
-  margin:auto;
-  padding:20px;
-}
+    .tag {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(37, 99, 235, 0.15);
+      color: #60a5fa;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
 
-.screen{display:none;}
-.screen.active{display:block;}
+    .slogan {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 0 0 16px 0;
+      letter-spacing: -0.02em;
+    }
 
-h1{
-  font-size:30px;
-  line-height:1.2;
-}
+    .slogan span {
+      color: #0f766e;
+      display: block;
+    }
 
-.highlight{
-  color:var(--green);
-}
+    .sub-slogan {
+      font-size: 20px;
+      color: #cbd5e1;
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
 
-.sub{
-  color:var(--muted);
-  margin-top:10px;
-}
+    .desc {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 380px;
+      margin: 0 auto 32px;
+    }
 
-/* CARD */
-.card{
-  background:rgba(2,6,23,0.8);
-  border:1px solid rgba(20,241,198,0.08);
-  border-radius:20px;
-  padding:20px;
-  margin-top:20px;
-  backdrop-filter:blur(10px);
-}
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 15px;
+      padding: 16px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
 
-/* INPUT */
-input{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.05);
-  background:#020617;
-  color:white;
-}
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #0d9488);
+      color: white;
+      box-shadow: 0 12px 24px rgba(15, 118, 110, 0.25);
+    }
 
-/* BUTTON */
-button{
-  width:100%;
-  margin-top:15px;
-  padding:16px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,var(--green),var(--green2));
-  font-weight:bold;
-  cursor:pointer;
-  color:#020617;
-  box-shadow:0 10px 30px rgba(20,241,198,0.25);
-}
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
 
-.secondary{
-  background:#0b1220;
-  color:#94a3b8;
-}
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 32px;
+    }
 
-/* WHATS */
-.wa{
-  background:#0b1220;
-  border-radius:20px;
-  padding:15px;
-}
+    /* ===== RESTANTE DO APP (igual ao seu código anterior, mas simplificado) ===== */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
 
-.msg{
-  background:white;
-  color:black;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:10px;
-}
+    .card-title {
+      font-size: 18px;
+      font-weight: 750;
+      margin: 0 0 14px 0;
+    }
 
-.confirm{
-  background:#22c55e;
-  color:white;
-}
+    .label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
 
-/* HASH */
-.hash{
-  font-family:monospace;
-  font-size:12px;
-  word-break:break-all;
-  color:var(--green);
-}
+    .input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text);
+      font-size: 15px;
+      border-radius: 14px;
+      padding: 15px 14px;
+      outline: none;
+      margin-bottom: 14px;
+    }
 
-/* TRANSIÇÃO */
-.fade{
-  animation:fade 0.4s ease;
-}
+    .input:focus {
+      border-color: rgba(37, 99, 235, 0.5);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
 
-@keyframes fade{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-</style>
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .info:last-child { border-bottom: none; }
+
+    .info-label { color: var(--muted); font-weight: 600; }
+    .info-value { color: var(--text); font-weight: 700; text-align: right; }
+
+    .status-ok { color: var(--success); }
+
+    .hash-box {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #60a5fa;
+      word-break: break-all;
+    }
+
+    .qr-box {
+      height: 120px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #60a5fa;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .cert-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(5, 150, 105, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(5, 150, 105, 0.3);
+      font-size: 12px;
+      font-weight: 800;
+      margin: 8px auto;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <!-- TELA INICIAL (LANDING) -->
+    <section class="screen active" id="screen-landing">
+      <div class="landing">
+        <div class="tag">CERTIFICAÇÃO DE ENTREGAS PARA COOPERATIVAS</div>
 
-<div class="intro">
-  <div style="text-align:center">
-    <div class="glow"></div>
-    <div class="logo">Fraud<span>Log</span></div>
-    <p class="sub">Cada entrega. Cada prova. Irrefutável.</p>
+        <h1 class="slogan">
+          O que protege o motoboy<br>
+          <span>protege você.</span>
+        </h1>
+
+        <p class="sub-slogan">Cada entrega. Cada prova. Irrefutável.</p>
+
+        <p class="desc">
+          Sua cooperativa perde dinheiro toda vez que um cliente diz "não recebi". O FraudLog certifica cada entrega automaticamente — sem mudar nada na rotina do seu entregador.
+        </p>
+
+        <button class="btn btn-primary" onclick="iniciarDemo()">Quero o piloto gratuito</button>
+        <button class="btn btn-outline" onclick="showScreen('screen-demo')">Como funciona →</button>
+
+        <div class="footer-note">
+          Plataforma 100% web — sem app nativo. Funciona em qualquer smartphone.
+        </div>
+      </div>
+    </section>
+
+    <!-- DEMO (Fluxo completo) -->
+    <section class="screen" id="screen-demo">
+      <div class="card">
+        <h2 class="card-title">Demonstração em tempo real</h2>
+        <p class="desc">Vamos simular uma entrega com GPS real do seu celular.</p>
+
+        <button class="btn btn-primary" onclick="iniciarEntregaComGPS()">▶ Iniciar entrega com GPS</button>
+        <button class="btn btn-outline" onclick="showScreen('screen-landing')">← Voltar</button>
+      </div>
+    </section>
+
+    <!-- LOGIN (opcional, se quiser manter) -->
+    <section class="screen" id="screen-login">
+      <div class="card">
+        <h2 class="card-title">Acesso do entregador</h2>
+        <label class="label" for="cpf">CPF</label>
+        <input class="input" id="cpf"="text" placeholder="000.000.000-00" maxlength="14" />
+        <="label" for="celular">Celular</label>
+        <input class="input" id="celular" type="tel" placeholder="(11) 99999-9999" maxlength="15" />
+        <button class="btn btn-primary" onclick="login()">Entrar</button>
+      </div>
+    </section>
+
+    <!-- ENTREGA COM GPS REAL -->
+    <section class="screen" id="screen-entrega">
+      <div class="card">
+        <h2 class="card-title">Entrega em andamento</h2>
+        <div class="info-list">
+          <div class="info">
+            <div class="info-label">Pedido</div>
+            <div class="info-value" id="edido">FL-78945</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Destino</div>
+            <div class="info-value">Rua das Palmeiras, 120</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Hora</div>
+            <div class="info-value" id="entrega-hora">--:--:--</div>
+          </div>
+          <div class="info">
+            <div class="info-label">GPS</div>
+            <div class="info-value" id="entrega-gps">Aguardando...</div>
+          </div>
+        </div>
+        <div class="qr-box">📍 GPS sendo capturado...</div>
+      </div>
+      <button class="btn btn-primary" onclick="confirmarEntrega()">Confirmar entrega</button>
+      <button class="btn btn-outline" onclick="showScreen('screen-demo')">← Voltar</button>
+    </section>
+
+    <!-- CERTIFICADO COM ENVIO PARA WHATSAPP -->
+    <section class="screen" id="screen-certificado">
+      <div class="card">
+        <div class="cert-badge">✓ Evidência gerada</div>
+        <h2 class="card-title">Entrega validada</h2>
+
+        <div class="info-list">
+          <div class="info">
+            <div class="info-label">Pedido</div>
+            <div class="info-value" id="cert-pedido">FL-78945</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Hora</div>
+            <div class="info-value" id="cert-hora">--:--:--</div>
+          </div>
+          <div class="info">
+            <div class="info-label">GPS</div>
+            <div class="info-value" id="cert-gps">-23.5505, -46.6333</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Hash</div>
+            <div class="info-value" id="cert-hash">FLX-abc123...</div>
+          </div>
+        </div>
+
+        <div class="qr-box">📱 Enviando para WhatsApp...</div>
+        <div class="hash-box" id="cert-texto">Carregando...</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="enviarParaWhatsApp()">📤 Enviar comprovante para WhatsApp</button>
+      <button class="btn btn-success" onclick="novaEntrega()">🔄 Nova entrega</button>
+      <button class="btn btn-outline" onclick="showScreen('screen-demo')">Voltar</button>
+    </section>
   </div>
-</div>
 
-<div class="app">
+  <script>
+    let dados = {
+      pedido: 'FL-' + Math.floor(Math.random() * 90000 + 10000),
+      destino: 'Rua das Palmeiras, 120',
+      hora: '',
+      gps: { lat: null, lng: null },
+      hash: ''
+    };
 
-<!-- LOGIN -->
-<div id="login" class="screen active fade">
-  <div class="tag">CERTIFICAÇÃO DE ENTREGAS</div>
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
 
-  <h1>
-    O que protege o motoboy <br>
-    <span class="highlight">protege você.</span>
-  </h1>
+    function iniciarDemo() {
+      showScreen('screen-demo');
+    }
 
-  <p class="sub">Cada entrega. Cada prova. Irrefutável.</p>
+    function iniciarEntregaComGPS() {
+      // Captura GPS real
+      if (!navigator.geolocation) {
+        alert("Seu navegador não suporta geolocalização.");
+        return;
+      }
 
-  <div class="card">
-    <input id="cpf" placeholder="CPF">
-    <input id="tel" placeholder="Telefone">
-    <button onclick="login()">Entrar</button>
-  </div>
-</div>
+      showScreen('screen-entrega');
+      document.getElementById('entrega-hora').innerText = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      
+      document.getElementById('entrega-gps').innerText = '🔍 Buscando localização...';
+      document.querySelector('.qr-box').innerText = '📍 Buscando GPS...';
 
-<!-- DASH -->
-<div id="dash" class="screen fade">
-  <h1>Proteção ativa</h1>
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          dados.gps.lat = parseFloat(latitude.toFixed(6));
+          dados.gps.lng = parseFloat(longitude.toFixed(6));
+          
+          document.getElementById('entrega-gps').innerText = `${dados.gps.lat}, ${dados.gps.lng}`;
+          document.querySelector('.qr-box').innerText = `📍 ${dados.gps.lat}, ${dados.gps.lng}`;
+        },
+        (error) => {
+          console.error("Erro ao obter GPS:", error);
+          // Fallback: usa coordenadas simuladas
+          dados.gps.lat = -23.5505;
+          dados.gps.lng = -46.6333;
+          document.getElementById('entrega-gps').innerText = `${dados.gps.lat}, ${dados.gps.lng}`;
+          document.querySelector('.qr-box').innerText = `📍 ${dados.gps.lat}, ${dados.gps.lng}`;
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    }
 
-  <div class="card">
-    <p>Status: <span class="highlight">Ativo</span></p>
-    <button onclick="nova()">Iniciar entrega</button>
-  </div>
-</div>
+    function confirmarEntrega() {
+      dados.hora = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      dados.hash = 'FLX-' + Math.random().toString(36).substring(2, 14) + Math.random().toString(36).substring(2, 14);
 
-<!-- ENTREGA -->
-<div id="entrega" class="screen fade">
-  <h1>Entrega iniciada</h1>
+      document.getElementById('cert-pedido').innerText = dados.pedido;
+      document.getElementById('cert-hora').innerText = dados.hora;
+      document.getElementById('cert-gps').innerText = `${dados.gps.lat}, ${dados.gps.lng}`;
+      document.getElementById('cert-hash').innerText = dados.hash;
 
-  <div class="card">
-    <p>Pedido: <b id="pedido"></b></p>
-    <button onclick="whatsapp()">Notificar recebedor</button>
-  </div>
-</div>
+      // Monta texto para WhatsApp
+      const texto = encodeURIComponent(
+        `📦 FraudLog — Comprovante de Entrega\n` +
+        `Pedido: ${dados.pedido}\n` +
+        `Horário: ${dados.hora}\n` +
+        `Local: ${dados.gps.lat}, ${dados.gps.lng}\n` +
+        `Hash: ${dados.hash}\n` +
+        `Status: Entrega confirmada e auditável`
+      );
 
-<!-- WHATS -->
-<div id="wa" class="screen fade">
-  <h1>Confirmação</h1>
+      document.getElementById('cert-texto').innerText = 
+        `Pedido: ${dados.pedido}\n` +
+        `GPS: ${dados.gps.lat}, ${dados.gps.lng}\n` +
+        `Hash: ${dados.hash}`;
 
-  <div class="wa">
-    <div class="msg">
-      📦 Confirme o recebimento<br>
-      Pedido: <b id="pedido2"></b>
-    </div>
+      showScreen('screen-certificado');
+    }
 
-    <button class="confirm" onclick="confirmar()">Confirmar</button>
-  </div>
-</div>
+    function enviarParaWhatsApp() {
+      const numero = prompt("Digite o número do entregador (com DDD, ex: 11999998888)", "11999998888");
+      if (!numero) return;
 
-<!-- PROCESS -->
-<div id="proc" class="screen fade">
-  <h1>Gerando prova...</h1>
-</div>
+      const texto = encodeURIComponent(
+        `📦 FraudLog — Comprovante de Entrega\n` +
+        `Pedido: ${dados.pedido}\n` +
+        `Horário: ${dados.hora}\n` +
+        `Local: ${dados.gps.lat}, ${dados.gps.lng}\n` +
+        `Hash: ${.hash}\n` +
+        `Status: Entrega confirmada e auditável`
+      );
 
-<!-- CERT -->
-<div id="cert" class="screen fade">
-  <h1>Entrega validada</h1>
+      const url = `https://web.whatsapp.com/send?phone=55${numero}&text=${texto}`;
+      
+      // Abre no navegador (funciona no celular)
+      window.open(url, '_blank');
 
-  <div class="card">
-    <p>Prova criptográfica:</p>
-    <div class="hash" id="hash"></div>
-  </div>
+      alert("✅ Comprovante enviado! Abra o WhatsApp para finalizar o    }
 
-  <button onclick="enviarWhats()">Enviar para WhatsApp</button>
-  <button class="secondary" onclick="compartilhar()">Compartilhar</button>
-  <button onclick="nova()">Nova entrega</button>
-</div>
+    function novaEntrega() {
+      showScreen('screen-entrega');
+      document.getElementById('entrega-gps').innerText = 'Aguardando...';
+      document.querySelector('.qr-box').innerText = '📍 GPS sendo capturado...';
+      iniciarEntregaComGPS();
+    }
 
-</div>
-
-<script>
-function show(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-
-function login(){ show("dash"); }
-
-function nova(){
-  let p = "FL-"+Math.floor(Math.random()*99999);
-  document.getElementById("pedido").innerText = p;
-  document.getElementById("pedido2").innerText = p;
-  show("entrega");
-}
-
-function whatsapp(){ show("wa"); }
-
-function confirmar(){
-  show("proc");
-  setTimeout(()=>{
-    let h="FLX-"+Math.random().toString(16).substring(2,50);
-    document.getElementById("hash").innerText=h;
-    show("cert");
-  },1200);
-}
-
-/* ENVIO */
-function texto(){
-  return "FraudLog - Certificado\nPedido: "+
-    document.getElementById("pedido").innerText+
-    "\nHash: "+document.getElementById("hash").innerText;
-}
-
-function enviarWhats(){
-  let url="https://wa.me/?text="+encodeURIComponent(texto());
-  window.open(url,"_blank");
-}
-
-function compartilhar(){
-  if(navigator.share){
-    navigator.share({text:texto()});
-  }else{
-    alert(texto());
-  }
-}
-</script>
-
+    function login() {
+      const cpf = document.getElementById('cpf').value;
+      const celular = document.getElementById('celular').value;
+      if (cpf && celular) {
+        showScreen('screen-demo');
+      } else {
+        alert('Preencha CPF e Celular.');
+      }
+    }
+  </script>
 </body>
 </html>
