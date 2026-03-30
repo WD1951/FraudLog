@@ -3,156 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MotoShield - App do Motoboy</title>
-    
-    <meta property="og:title" content="MotoShield: Sua presença provada">
-    <meta property="og:description" content="Protocolo de segurança com GPS e Assinatura Digital para entregadores.">
+    <title>FraudLog — Certificação de Entrega</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <script>
-        // Configuração de cores personalizadas baseadas na Landing Page
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        shieldBlue: {
-                            DEFAULT: '#2563eb', // Azul profissional da Landing Page
-                            dark: '#1d4ed8',
-                        },
-                        shieldBg: '#ffffff', // Fundo Branco
-                        shieldText: '#1e293b', // Texto Cinza Escuro
-                        shieldCard: '#f8fafc', // Fundo dos Cards
+                        fraudGreen: '#00C896', // Verde da marca FraudLog
+                        fraudBlue: '#2563eb',  // Azul de proteção
+                        fraudBg: '#FFFFFF',    // Fundo Branco solicitado
                     }
                 }
             }
         }
     </script>
-
     <style>
-        /* Ajuste do Mapa para não quebrar o layout mobile */
-        #map { 
-            height: 280px; 
-            z-index: 1; 
-            border-radius: 1.5rem; 
-            border: 1px solid #e2e8f0; 
-        }
-        
-        /* Animação de Pulsação no GPS (Estilo "ativo") */
+        #map { height: 250px; z-index: 1; border-radius: 1.5rem; border: 1px solid #e2e8f0; }
         .gps-pulse {
-            width: 14px; height: 14px;
-            background: #2563eb; border-radius: 50%;
-            box-shadow: 0 0 0 rgba(37, 99, 235, 0.4);
+            width: 12px; height: 12px;
+            background: #00C896; border-radius: 50%;
+            box-shadow: 0 0 0 rgba(0, 200, 150, 0.4);
             animation: pulse 2s infinite;
         }
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
-            70% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(0, 200, 150, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 200, 150, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 200, 150, 0); }
         }
-
-        /* Esconder barra de rolagem (opcional para ficar mais "app") */
-        ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-shieldText">
+<body class="bg-gray-50 font-sans text-slate-900">
 
-    <div class="max-w-[400px] mx-auto bg-shieldBg min-h-screen shadow-2xl flex flex-col border-x border-gray-200 overscroll-contain">
+    <div class="max-w-[430px] mx-auto bg-white min-h-screen shadow-xl flex flex-col border-x border-gray-100">
         
-        <header class="bg-shieldBg p-6 pb-2 text-center border-b border-gray-100 sticky top-0 z-[1001]">
+        <header class="p-8 pb-4 text-center border-b border-gray-50">
             <div class="flex flex-col items-center gap-2">
-                <div class="flex items-center gap-3">
-                    <span class="text-3xl">🛡️</span> <h1 class="text-2xl font-black tracking-tight text-slate-800">
-                        Moto<span class="text-shieldBlue">Shield</span>
-                    </h1>
+                <div class="w-16 h-16 bg-emerald-50 border-2 border-fraudGreen rounded-2xl flex items-center justify-center shadow-sm">
+                    <svg width="35" height="35" viewBox="0 0 40 40" fill="none">
+                        <path d="M20 4L7 11V22C7 29.7 12.8 36.8 20 38.5C27.2 36.8 33 29.7 33 22V11L20 4Z" stroke="#00C896" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M14 20L18 24L26 16" stroke="#00C896" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                 </div>
-                <p class="text-xs text-gray-500 font-medium">PROTOCOLO DE ENTREGA SEGURA</p>
+                <h1 class="text-2xl font-black tracking-tighter text-slate-800">Fraud<span class="text-fraudGreen">Log</span></h1>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Sovereign Certification</p>
             </div>
         </header>
 
-        <main class="p-5 flex-grow space-y-7">
+        <main class="p-6 space-y-8 flex-grow">
             
-            <section class="text-center p-2">
-                <p class="text-gray-500 text-sm">Olá, entregador</p>
-                <h2 class="text-3xl font-black text-slate-900">João Silva</h2>
-                <div class="inline-flex items-center gap-2 mt-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-xs font-semibold">
-                    <div class="relative flex h-2.5 w-2.5">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-600"></span>
-                    </div>
-                    App ativo — proteção ligada
-                </div>
-            </section>
-
-            <section class="grid grid-cols-2 gap-4">
-                <div class="bg-shieldCard p-5 rounded-2xl border border-gray-100 text-center">
-                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Entregas Hoje</p>
-                    <p class="text-4xl font-black text-green-600 mt-1">14</p>
-                </div>
-                <div class="bg-shieldCard p-5 rounded-2xl border border-gray-100 text-center">
-                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Provas Geradas</p>
-                    <p class="text-4xl font-black text-shieldBlue mt-1">112</p>
-                </div>
-            </section>
-
-            <section class="bg-shieldCard p-6 rounded-2xl border border-gray-100 flex items-center gap-4 shadow-inner">
-                <div class="p-3 bg-red-100 text-red-600 text-3xl rounded-xl">🚫</div>
-                <div>
-                    <h3 class="text-xs text-gray-500 uppercase tracking-wider">Disputas Bloqueadas</h3>
-                    <p class="text-2xl font-black text-slate-900 mt-0.5">3 fraudes impedidas</p>
-                    <p class="text-[11px] text-gray-500">com prova criptográfica irrefutável</p>
+            <section class="space-y-4">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Atribuições do Operador</h2>
+                <div class="space-y-3">
+                    <input type="tel" id="cpf" placeholder="CPF do Entregador" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-fraudGreen outline-none transition-all">
+                    <input type="tel" id="celular" placeholder="WhatsApp para Relatório" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-fraudGreen outline-none transition-all">
                 </div>
             </section>
 
             <section class="space-y-3">
                 <div class="flex justify-between items-center px-1">
-                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest italic">Localização em Tempo Real</h2>
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Prova Geográfica</h2>
                     <div class="gps-pulse"></div>
                 </div>
-                <div id="map" class="shadow-md"></div>
-                <p class="text-[10px] text-center text-gray-400">Coordenadas capturadas via satélite (WGS84)</p>
+                <div id="map"></div>
+                <div class="flex justify-between text-[10px] text-slate-400 px-1 font-mono">
+                    <span id="coords">Capturando satélites...</span>
+                    <span>Precisão: ±12m</span>
+                </div>
             </section>
 
-            <section class="sticky bottom-6 z-10 p-3 bg-shieldBg/95 backdrop-blur-sm rounded-t-xl">
-                <button onclick="iniciarNovaEntrega()" id="btnIniciar" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-lg hover:bg-black active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3">
-                    <span class="text-2xl">⚡</span>
-                    Iniciar Nova Entrega
-                </button>
+            <section class="bg-emerald-50/50 p-5 rounded-3xl border border-emerald-100">
+                <h2 class="text-sm font-bold text-emerald-900 mb-3">Confirmação de Recebimento</h2>
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input type="checkbox" id="aceite" class="mt-1 w-5 h-5 rounded border-emerald-300 text-fraudGreen focus:ring-fraudGreen">
+                    <span class="text-xs text-emerald-800 leading-relaxed font-medium">
+                        Eu, consumidor, certifico o recebimento deste pedido e autorizo o registro das coordenadas geográficas para fins de prova irrefutável.
+                    </span>
+                </label>
             </section>
 
+            <button onclick="gerarRelatorio()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-lg hover:bg-black active:scale-95 transition-all shadow-xl">
+                GERAR CERTIFICADO FINAL
+            </button>
         </main>
+    </div>
+
+    <div id="modal" class="fixed inset-0 bg-black/60 z-[2000] hidden flex items-end justify-center">
+        <div class="bg-white w-full max-w-[430px] rounded-t-[2.5rem] p-8 space-y-6 shadow-2xl animate-bounce-in">
+            <div class="w-12 h-1 bg-slate-200 mx-auto rounded-full mb-2"></div>
+            <div class="text-center">
+                <div class="text-fraudGreen text-5xl mb-2">✓</div>
+                <h3 class="text-xl font-bold">Entrega Certificada</h3>
+                <p class="text-sm text-gray-500">O relatório forense foi gerado com sucesso.</p>
+            </div>
+            <div id="dadosRelatorio" class="bg-slate-50 p-5 rounded-2xl font-mono text-[11px] text-slate-600 border border-slate-100 leading-loose">
+                </div>
+            <div class="flex gap-3">
+                <button onclick="location.reload()" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-sm">Novo</button>
+                <button onclick="window.print()" class="flex-1 py-4 bg-fraudGreen text-white rounded-2xl font-bold text-sm shadow-lg shadow-emerald-200">Compartilhar</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Inicialização do Mapa (Foco na Av. Paulista, SP como padrão)
+        // Configuração do Mapa
         const lat = -23.5615, lon = -46.6553;
-        const map = L.map('map', {
-            zoomControl: false, // Mobile prefere sem botões de zoom
-            attributionControl: false // Limpar o visual
-        }).setView([lat, lon], 16);
-        
-        // Adiciona a camada do mapa (OpenStreetMap)
+        const map = L.map('map', {zoomControl: false}).setView([lat, lon], 16);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        
-        // Adiciona o marcador simulando o motoboy parado
-        L.marker([lat, lon]).addTo(map).bindPopup("Você está aqui").openPopup();
+        L.marker([lat, lon]).addTo(map);
+        document.getElementById('coords').innerText = lat + ", " + lon;
 
-        // Lógica de simulação
-        function iniciarNovaEntrega() {
-            alert('A transição para o mapa está sendo preparada. Abra no navegador do computador para ver a simulação forense.');
-        }
+        function gerarRelatorio() {
+            const cpf = document.getElementById('cpf').value;
+            const cel = document.getElementById('celular').value;
+            const aceite = document.getElementById('aceite').checked;
 
-        // Verificação extra para o "Script error" no Xiaomi — Avisa se não carregar
-        window.addEventListener('load', function() {
-            if (typeof L === 'undefined') {
-                console.error("Erro: A biblioteca do mapa (Leaflet) não foi carregada. Verifique sua conexão ou se o CORS está bloqueando.");
-            } else {
-                console.log("Leaflet carregado com sucesso.");
+            if(!cpf || !cel || !aceite) {
+                alert("Erro: Preencha todos os campos e confirme o aceite do consumidor.");
+                return;
             }
-        });
+
+            const ts = new Date().toLocaleString('pt-BR');
+            const hash = btoa(cpf + ts).substring(0, 16).toUpperCase();
+
+            document.getElementById('dadosRelatorio').innerHTML = `
+                <p><strong>HASH ID:</strong> FL-${hash}</p>
+                <p><strong>TIMESTAMP:</strong> ${ts}</p>
+                <p><strong>OPERADOR CPF:</strong> ${cpf}</p>
+                <p><strong>GPS:</strong> ${lat}, ${lon}</p>
+                <p><strong>STATUS:</strong> PROVA CRIPTOGRÁFICA GERADA</p>
+            `;
+
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal').classList.add('flex');
+        }
     </script>
 </body>
 </html>
