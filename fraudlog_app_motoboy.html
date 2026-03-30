@@ -1,264 +1,982 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FraudLock Delivery</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FraudLog Delivery</title>
 
-<style>
-body {
-  background:#f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  margin:0;
-  padding:16px;
-  color:#0f172a;
-}
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-2: #2563eb;
+      --accent: #0f766e;
+      --success: #059669;
+      --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
 
-.container { max-width:420px; margin:auto; }
+    * {
+      box-sizing: border-box;
+    }
 
-.header {
-  text-align:center;
-  margin-bottom:20px;
-}
-.header h1 { color:#2563eb; margin:0; }
-.header p { color:#64748b; font-size:0.9rem; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      min-height: 100%;
+    }
 
-.card {
-  background:white;
-  padding:18px;
-  border-radius:16px;
-  margin-bottom:14px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
+    body {
+      padding: 18px;
+    }
 
-input {
-  width:100%;
-  padding:14px;
-  margin-top:6px;
-  margin-bottom:14px;
-  border-radius:10px;
-  border:1px solid #e2e8f0;
-}
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: calc(100vh - 36px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
 
-button {
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  font-weight:bold;
-  margin-bottom:10px;
-  cursor:pointer;
-}
+    .screen {
+      display: none;
+      animation: fadeUp 0.45s ease;
+    }
 
-.primary { background:#2563eb; color:white; }
-.success { background:#10b981; color:white; }
-.gray { background:#e2e8f0; }
+    .screen.active {
+      display: block;
+    }
 
-.hidden { display:none; }
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-.info {
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid #e2e8f0;
-  font-size:0.9rem;
-}
+    .intro {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.10), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(15, 118, 110, 0.08), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: introExit 0.9s ease 1.9s forwards;
+    }
 
-.status {
-  color:#10b981;
-  font-weight:bold;
-}
+    @keyframes introExit {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
 
-.hash {
-  font-family:monospace;
-  font-size:0.75rem;
-  word-break:break-all;
-  background:#f1f5f9;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
-}
+    .intro-card {
+      text-align: center;
+      animation: introRise 1s ease;
+    }
 
-.whatsapp {
-  background:#e5ddd5;
-  border-radius:16px;
-  padding:12px;
-}
+    @keyframes introRise {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
 
-.msg {
-  background:white;
-  padding:10px;
-  border-radius:10px;
-  margin-bottom:10px;
-  font-size:0.9rem;
-}
+    .shield {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 16px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 14px 36px rgba(37, 99, 235, 0.22);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 30px;
+      position: relative;
+      overflow: hidden;
+    }
 
-.confirm-btn {
-  background:#25d366;
-  color:white;
-  text-align:center;
-  padding:12px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .shield::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.45) 50%, transparent 70%);
+      transform: translateX(-120%);
+      animation: shine 1.5s ease 0.4s 1;
+    }
 
-.qr {
-  background:#0f172a;
-  height:120px;
-  border-radius:8px;
-  margin:10px auto;
-}
+    @keyframes shine {
+      to {
+        transform: translateX(120%);
+      }
+    }
 
-</style>
+    .brand {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .brand span {
+      color: var(--primary);
+    }
+
+    .intro-sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: 0.01em;
+    }
+
+    .header {
+      margin-bottom: 20px;
+      text-align: center;
+      animation: fadeUp 0.65s ease;
+    }
+
+    .header-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      background: rgba(255,255,255,0.9);
+      border-radius: 999px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 14px;
+    }
+
+    .header-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .header-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+      color: var(--text);
+    }
+
+    .header-title span {
+      color: var(--primary);
+    }
+
+    .header-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 750;
+      margin: 0 0 14px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin: -4px 0 16px 0;
+      line-height: 1.45;
+    }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font-size: 15px;
+      border-radius: 14px;
+      padding: 15px 14px;
+      outline: none;
+      transition: 0.2s ease;
+      margin-bottom: 14px;
+    }
+
+    .input:focus {
+      border-color: rgba(37, 99, 235, 0.5);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 15px;
+      padding: 15px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      margin-top: 2px;
+    }
+
+    .btn + .btn {
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      opacity: 0.96;
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn-soft {
+      background: var(--surface-soft);
+      color: var(--text);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      box-shadow: 0 12px 24px rgba(5, 150, 105, 0.18);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid #dbeafe;
+    }
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+
+    .info:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .info-value {
+      color: var(--text);
+      text-align: right;
+      font-weight: 700;
+      max-width: 60%;
+    }
+
+    .status-ok {
+      color: var(--success);
+    }
+
+    .subcard {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .wa-shell {
+      background: linear-gradient(180deg, #eaf4ee 0%, #f6fbf7 100%);
+      border: 1px solid #d9ebe0;
+      border-radius: 22px;
+      padding: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .wa-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 4px 12px;
+    }
+
+    .wa-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .wa-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #14532d;
+    }
+
+    .wa-status {
+      font-size: 12px;
+      color: #4b5563;
+      margin-top: 2px;
+    }
+
+    .wa-message {
+      background: white;
+      border-radius: 16px 16px 16px 6px;
+      padding: 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+      font-size: 14px;
+      line-height: 1.5;
+      color: #0f172a;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.9);
+    }
+
+    .wa-message strong {
+      color: #0f172a;
+    }
+
+    .wa-confirm {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: white;
+      border: none;
+      width: 100%;
+      border-radius: 14px;
+      padding: 14px 15px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(34, 197, 94, 0.18);
+    }
+
+    .processing-wrap {
+      text-align: center;
+      padding: 10px 0 4px;
+    }
+
+    .spinner {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      border: 3px solid #dbeafe;
+      border-top-color: var(--primary);
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .processing-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .processing-text {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .progress {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #60a5fa);
+      border-radius: 999px;
+      transition: width 1.9s ease;
+    }
+
+    .certificate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: var(--success);
+      border: 1px solid #d1fae5;
+      font-size: 12px;
+      font-weight: 800;
+      margin: 2px auto 14px;
+    }
+
+    .qr-box {
+      height: 132px;
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, rgba(15,23,42,0.06) 1px, transparent 1px) 0 0/22px 22px,
+        linear-gradient(rgba(15,23,42,0.06) 1px, transparent 1px) 0 0/22px 22px,
+        linear-gradient(135deg, #0f172a, #334155);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .qr-box::before,
+    .qr-box::after {
+      content: "";
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border: 4px solid rgba(255,255,255,0.92);
+      border-radius: 6px;
+    }
+
+    .qr-box::before {
+      top: 16px;
+      left: 16px;
+    }
+
+    .qr-box::after {
+      right: 16px;
+      bottom: 16px;
+    }
+
+    .hash-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .hash-box {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--primary);
+      word-break: break-all;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .mini-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.45;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="intro" id="intro">
+    <div class="intro-card">
+      <div class="shield">🛡</div>
+      <h1 class="brand">Fraud<span>Log</span></h1>
+      <div class="intro-sub">Certificação antifraude de entregas</div>
+    </div>
+  </div>
 
-<div class="container">
+  <div class="app">
+    <!-- LOGIN -->
+    <section class="screen active" id="screen-login">
+      <div class="header">
+        <div class="header-logo">
+          <div class="header-icon">FL</div>
+          <div style="text-align:left">
+            <div class="header-title">Fraud<span>Log</span></div>
+          </div>
+        </div>
+        <p class="header-subtitle">
+          Plataforma de evidência digital para entregas, cooperativas e disputas logísticas.
+        </p>
+      </div>
 
-<div class="header">
-<h1>🛡️ FraudLock</h1>
-<p>Validação antifraude de entregas</p>
-</div>
+      <div class="card">
+        <h2 class="card-title">Acesso do entregador</h2>
+        <p class="card-subtitle">
+          Inicie a sessão segura para registrar o evento de entrega e gerar o certificado auditável.
+        </p>
 
-<!-- LOGIN -->
-<div id="login">
-<div class="card">
-<input id="cpf" placeholder="CPF">
-<button class="primary" onclick="login()">Entrar</button>
-</div>
-</div>
+        <label class="label" for="cpf">CPF do entregador</label>
+        <input class="input" id="cpf" type="text" placeholder="00000000000" inputmode="numeric" maxlength="11" />
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-<div class="card">
-<div class="info"><span>Status</span><span class="status">Sessão Segura</span></div>
-<div class="info"><span>Cooperativa</span><span>CoopLog Brasil</span></div>
-<div class="info"><span>Entregador</span><span id="nome"></span></div>
-</div>
+        <label class="label" for="celular">Celular</label>
+        <input class="input" id="celular" type="tel" placeholder="11999999999" inputmode="numeric" maxlength="11" />
 
-<button class="success" onclick="novaEntrega()">🚀 Iniciar Entrega</button>
-</div>
+        <button class="btn btn-primary" onclick="login()">Entrar na sessão segura</button>
 
-<!-- ENTREGA -->
-<div id="entrega" class="hidden">
-<div class="card">
-<div class="info"><span>Pedido</span><span id="pedido"></span></div>
-<div class="info"><span>Destino</span><span>Rua Exemplo, 123</span></div>
-<div class="info"><span>Hora</span><span id="hora"></span></div>
-</div>
+        <div class="mini-note">
+          Simulação para apresentação comercial do fluxo de confirmação via WhatsApp.
+        </div>
+      </div>
+    </section>
 
-<button class="primary" onclick="simularWhats()">📲 Notificar via WhatsApp</button>
-</div>
+    <!-- DASHBOARD -->
+    <section class="screen" id="screen-dashboard">
+      <div class="header">
+        <div class="header-logo">
+          <div class="header-icon">FL</div>
+          <div style="text-align:left">
+            <div class="header-title">Fraud<span>Log</span></div>
+          </div>
+        </div>
+        <p class="header-subtitle">
+          Jornada de entrega protegida por evidência contextual e confirmação do recebedor.
+        </p>
+      </div>
 
-<!-- WHATSAPP -->
-<div id="whatsapp" class="hidden">
-<div class="card whatsapp">
+      <div class="card">
+        <div class="pill-row">
+          <div class="pill">Sessão segura</div>
+          <div class="pill">Cooperativa validada</div>
+          <div class="pill">Fluxo auditável</div>
+        </div>
 
-<div class="msg">
-📦 Entrega disponível para confirmação<br><br>
-Pedido: <b id="w-pedido"></b><br>
-Cooperativa: CoopLog Brasil
-</div>
+        <div class="info-list">
+          <div class="info">
+            <div class="info-label">Status</div>
+            <div class="info-value status-ok">Proteção ativa</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Cooperativa</div>
+            <div class="info-value">CoopLog Brasil</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Entregador</div>
+            <div class="info-value" id="dashboard-entregador">-</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Modelo</div>
+            <div class="info-value">Confirmação via WhatsApp</div>
+          </div>
+        </div>
+      </div>
 
-<div class="confirm-btn" onclick="confirmar()">
-Confirmar recebimento
-</div>
+      <button class="btn btn-primary" onclick="novaEntrega()">Iniciar nova entrega</button>
+      <button class="btn btn-secondary" onclick="logout()">Encerrar sessão</button>
+    </section>
 
-</div>
-</div>
+    <!-- ENTREGA -->
+    <section class="screen" id="screen-entrega">
+      <div class="header">
+        <div class="header-logo">
+          <div class="header-icon">FL</div>
+          <div style="text-align:left">
+            <div class="header-title">Fraud<span>Log</span></div>
+          </div>
+        </div>
+        <p class="header-subtitle">
+          O motoboy inicia a validação e o sistema aciona o recebedor no WhatsApp.
+        </p>
+      </div>
 
-<!-- PROCESSANDO -->
-<div id="processando" class="hidden">
-<div class="card" style="text-align:center">
-<h3>Validando evento...</h3>
-<p>Gerando certificado antifraude</p>
-</div>
-</div>
+      <div class="card">
+        <h2 class="card-title">Entrega em andamento</h2>
 
-<!-- CERTIFICADO -->
-<div id="certificado" class="hidden">
+        <div class="info-list">
+          <div class="info">
+            <div class="info-label">Pedido</div>
+            <div class="info-value" id="entrega-pedido">-</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Destino</div>
+            <div class="info-value" id="entrega-destino">Rua Exemplo, 123</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Recebedor</div>
+            <div class="info-value" id="entrega-recebedor">Porteiro / Cliente</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Hora</div>
+            <div class="info-value" id="entrega-hora">-</div>
+          </div>
+          <div class="info">
+            <div class="info-label">GPS</div>
+            <div class="info-value" id="entrega-gps">-</div>
+          </div>
+        </div>
 
-<div class="card">
-<h3 style="text-align:center">Entrega Validada</h3>
+        <div class="subcard">
+          <div class="card-subtitle" style="margin:0">
+            Ao notificar o recebedor, a operação passa a ter dois polos: quem entrega e quem confirma.
+          </div>
+        </div>
+      </div>
 
-<div class="info"><span>Pedido</span><span id="c-pedido"></span></div>
-<div class="info"><span>Cooperativa</span><span>CoopLog Brasil</span></div>
-<div class="info"><span>Entregador</span><span id="c-entregador"></span></div>
-<div class="info"><span>Recebedor</span><span>Confirmado via WhatsApp</span></div>
-<div class="info"><span>Hora</span><span id="c-hora"></span></div>
-<div class="info"><span>Status</span><span class="status">Auditável</span></div>
+      <button class="btn btn-primary" onclick="simularWhatsApp()">Notificar recebedor via WhatsApp</button>
+      <button class="btn btn-soft" onclick="showScreen('screen-dashboard')">Voltar</button>
+    </section>
 
-</div>
+    <!-- WHATSAPP -->
+    <section class="screen" id="screen-whatsapp">
+      <div class="header">
+        <div class="header-logo">
+          <div class="header-icon">FL</div>
+          <div style="text-align:left">
+            <div class="header-title">Fraud<span>Log</span></div>
+          </div>
+        </div>
+        <p class="header-subtitle">
+          Simulação da confirmação do recebedor diretamente pelo celular.
+        </p>
+      </div>
 
-<div class="card">
-<div class="qr"></div>
-<div class="hash" id="hash"></div>
-</div>
+      <div class="card">
+        <div class="wa-shell">
+          <div class="wa-top">
+            <div class="wa-avatar">FL</div>
+            <div>
+              <div class="wa-name">FraudLog Delivery</div>
+              <div class="wa-status">Mensagem automática de validação</div>
+            </div>
+          </div>
 
-<button class="success" onclick="novaEntrega()">Nova Entrega</button>
+          <div class="wa-message">
+            📦 <strong>Sua entrega está pronta para confirmação.</strong><br><br>
+            Pedido: <strong id="wa-pedido">-</strong><br>
+            Cooperativa: <strong>CoopLog Brasil</strong><br>
+            Entregador: <strong id="wa-entregador">-</strong><br><br>
+            Toque abaixo para confirmar o recebimento no momento da entrega.
+          </div>
 
-</div>
+          <button class="wa-confirm" onclick="confirmarRecebimento()">Confirmar recebimento</button>
+        </div>
 
-</div>
+        <div class="mini-note">
+          Nesta apresentação, a confirmação é simulada para demonstrar a experiência no WhatsApp.
+        </div>
+      </div>
+    </section>
 
-<script>
+    <!-- PROCESSANDO -->
+    <section class="screen" id="screen-processando">
+      <div class="header">
+        <div class="header-logo">
+          <div class="header-icon">FL</div>
+          <div style="text-align:left">
+            <div class="header-title">Fraud<span>Log</span></div>
+          </div>
+        </div>
+      </div>
 
-let entrega = {}
+      <div class="card">
+        <div class="processing-wrap">
+          <div class="spinner"></div>
+          <div class="processing-title">Validando evento de entrega</div>
+          <div class="processing-text">
+            Consolidando horário, localização, cooperativa, entregador e confirmação do recebedor para gerar a evidência auditável.
+          </div>
+          <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-function mostrar(id){
-document.querySelectorAll('.container > div').forEach(d=>d.classList.add('hidden'))
-document.getElementById(id).classList.remove('hidden')
-}
+    <!-- CERTIFICADO -->
+    <section class="screen" id="screen-certificado">
+      <div class="header">
+        <div class="header-logo">
+          <div class="header-icon">FL</div>
+          <div style="text-align:left">
+            <div class="header-title">Fraud<span>Log</span></div>
+          </div>
+        </div>
+        <p class="header-subtitle">
+          Certificado gerado para proteger o motoboy, fortalecer a cooperativa e sustentar disputas.
+        </p>
+      </div>
 
-function login(){
-let cpf = document.getElementById('cpf').value
-document.getElementById('nome').innerText = "ID-"+cpf.slice(0,3)
-mostrar('dashboard')
-}
+      <div class="card" style="text-align:center">
+        <div class="certificate-badge">✓ Evidência disponível para disputa</div>
+        <h2 class="card-title" style="margin-top:0">Entrega validada</h2>
+        <p class="card-subtitle" style="margin-bottom:0">
+          Evento confirmado pelo recebedor com contexto operacional completo.
+        </p>
+      </div>
 
-function novaEntrega(){
-entrega = {
-pedido:"FL-"+Math.floor(Math.random()*90000),
-hora:new Date().toLocaleTimeString()
-}
+      <div class="card">
+        <div class="info-list">
+          <div class="info">
+            <div class="info-label">Pedido</div>
+            <div class="info-value" id="cert-pedido">-</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Cooperativa</div>
+            <div class="info-value">CoopLog Brasil</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Entregador</div>
+            <div class="info-value" id="cert-entregador">-</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Recebedor</div>
+            <div class="info-value">Confirmado via WhatsApp</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Hora</div>
+            <div class="info-value" id="cert-hora">-</div>
+          </div>
+          <div class="info">
+            <div class="info-label">GPS</div>
+            <div class="info-value" id="cert-gps">-</div>
+          </div>
+          <div class="info">
+            <div class="info-label">Status</div>
+            <div class="info-value status-ok">Auditável</div>
+          </div>
+        </div>
+      </div>
 
-document.getElementById('pedido').innerText = entrega.pedido
-document.getElementById('hora').innerText = entrega.hora
+      <div class="card">
+        <div class="qr-box"></div>
+        <div class="hash-label">Identificador criptográfico do evento</div>
+        <div class="hash-box" id="cert-hash">-</div>
+      </div>
 
-mostrar('entrega')
-}
+      <button class="btn btn-primary" onclick="compartilharCertificado()">Compartilhar certificado</button>
+      <button class="btn btn-success" onclick="novaEntrega()">Nova entrega</button>
+      <button class="btn btn-secondary" onclick="showScreen('screen-dashboard')">Voltar ao painel</button>
 
-function simularWhats(){
-document.getElementById('w-pedido').innerText = entrega.pedido
-mostrar('whatsapp')
-}
+      <div class="footer-note">
+        A cooperativa se diferencia porque a entrega deixa rastro digital verificável e consultável.
+      </div>
+    </section>
+  </div>
 
-function confirmar(){
-mostrar('processando')
-setTimeout(()=>gerarCertificado(),2000)
-}
+  <script>
+    let dadosEntrega = {};
+    let progressTimer = null;
 
-function gerarCertificado(){
-let hash = gerarHash()
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
 
-document.getElementById('c-pedido').innerText = entrega.pedido
-document.getElementById('c-hora').innerText = entrega.hora
-document.getElementById('c-entregador').innerText = document.getElementById('nome').innerText
-document.getElementById('hash').innerText = hash
+    function somenteNumeros(valor) {
+      return valor.replace(/\D/g, '');
+    }
 
-mostrar('certificado')
-}
+    function login() {
+      const cpf = somenteNumeros(document.getElementById('cpf').value);
+      const celular = somenteNumeros(document.getElementById('celular').value);
 
-function gerarHash(){
-let chars='abcdef0123456789'
-let h='FLX-'
-for(let i=0;i<40;i++) h+=chars[Math.floor(Math.random()*chars.length)]
-return h
-}
+      if (cpf.length < 3 || celular.length < 3) {
+        alert('Preencha CPF e celular para entrar na demonstração.');
+        return;
+      }
 
-</script>
+      const entregador = 'Entregador ' + cpf.slice(0, 3);
 
+      document.getElementById('dashboard-entregador').innerText = entregador;
+      showScreen('screen-dashboard');
+    }
+
+    function logout() {
+      document.getElementById('cpf').value = '';
+      document.getElementById('celular').value = '';
+      dadosEntrega = {};
+      showScreen('screen-login');
+    }
+
+    function gerarGPS() {
+      const lat = (-23.5505 - Math.random() * 0.01).toFixed(5);
+      const lng = (-46.6333 - Math.random() * 0.01).toFixed(5);
+      return lat + ', ' + lng;
+    }
+
+    function novaEntrega() {
+      const entregador = document.getElementById('dashboard-entregador').innerText || 'Entregador';
+      const pedido = 'FL-' + Math.floor(Math.random() * 90000 + 10000);
+      const hora = new Date().toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      const gps = gerarGPS();
+
+      dadosEntrega = {
+        pedido,
+        hora,
+        gps,
+        entregador,
+        cooperativa: 'CoopLog Brasil',
+        recebedor: 'Confirmado via WhatsApp'
+      };
+
+      document.getElementById('entrega-pedido').innerText = dadosEntrega.pedido;
+      document.getElementById('entrega-hora').innerText = dadosEntrega.hora;
+      document.getElementById('entrega-gps').innerText = dadosEntrega.gps;
+
+      showScreen('screen-entrega');
+    }
+
+    function simularWhatsApp() {
+      document.getElementById('wa-pedido').innerText = dadosEntrega.pedido;
+      document.getElementById('wa-entregador').innerText = dadosEntrega.entregador;
+      showScreen('screen-whatsapp');
+    }
+
+    function confirmarRecebimento() {
+      showScreen('screen-processando');
+
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = '0%';
+
+      setTimeout(() => {
+        progressBar.style.width = '100%';
+      }, 40);
+
+      clearTimeout(progressTimer);
+      progressTimer = setTimeout(() => {
+        gerarCertificado();
+      }, 2100);
+    }
+
+    function gerarHash() {
+      const chars = 'abcdef0123456789';
+      let hash = 'FLX-';
+      for (let i = 0; i < 48; i++) {
+        hash += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return hash;
+    }
+
+    function gerarCertificado() {
+      const hash = gerarHash();
+
+      document.getElementById('cert-pedido').innerText = dadosEntrega.pedido;
+      document.getElementById('cert-entregador').innerText = dadosEntrega.entregador;
+      document.getElementById('cert-hora').innerText = dadosEntrega.hora;
+      document.getElementById('cert-gps').innerText = dadosEntrega.gps;
+      document.getElementById('cert-hash').innerText = hash;
+
+      dadosEntrega.hash = hash;
+
+      showScreen('screen-certificado');
+    }
+
+    function compartilharCertificado() {
+      const texto =
+        'FraudLog — Certificado de Entrega\n' +
+        'Pedido: ' + (dadosEntrega.pedido || '-') + '\n' +
+        'Cooperativa: ' + (dadosEntrega.cooperativa || '-') + '\n' +
+        'Entregador: ' + (dadosEntrega.entregador || '-') + '\n' +
+        'Recebedor: ' + (dadosEntrega.recebedor || '-') + '\n' +
+        'Hora: ' + (dadosEntrega.hora || '-') + '\n' +
+        'GPS: ' + (dadosEntrega.gps || '-') + '\n' +
+        'Hash: ' + (dadosEntrega.hash || '-');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(() => {
+          alert('Certificado copiado. Agora você pode colar no WhatsApp.');
+        }).catch(() => {
+          alert(texto);
+        });
+      } else {
+        alert(texto);
+      }
+    }
+  </script>
 </body>
 </html>
