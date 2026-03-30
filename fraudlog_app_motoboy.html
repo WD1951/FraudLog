@@ -1,1115 +1,255 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FraudLock Delivery Proof</title>
-  <style>
-    :root{
-      --bg:#08111f;
-      --bg-2:#0f172a;
-      --card:#111c31;
-      --card-2:#17233b;
-      --line:rgba(255,255,255,.08);
-      --text:#eef4ff;
-      --muted:#98a7c2;
-      --primary:#5ba7ff;
-      --primary-2:#2970ff;
-      --success:#19c37d;
-      --warning:#f5b942;
-      --danger:#ef4444;
-      --shadow:0 20px 50px rgba(0,0,0,.35);
-      --radius:20px;
-    }
-
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:radial-gradient(circle at top, #14233e 0%, var(--bg) 45%, #040914 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-    body{min-height:100vh;padding:18px}
-
-    .app{
-      width:100%;
-      max-width:430px;
-      margin:0 auto;
-    }
-
-    .phone{
-      border:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
-      backdrop-filter: blur(8px);
-      border-radius:32px;
-      overflow:hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .topbar{
-      padding:18px 18px 10px;
-      background:
-        radial-gradient(circle at 20% 0%, rgba(91,167,255,.28), transparent 35%),
-        radial-gradient(circle at 80% 0%, rgba(25,195,125,.18), transparent 35%),
-        linear-gradient(180deg, #101a2d 0%, #0c1424 100%);
-      border-bottom:1px solid var(--line);
-    }
-
-    .brand-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-
-    .logo{
-      width:42px;
-      height:42px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(135deg,var(--primary),var(--success));
-      color:#fff;
-      font-weight:800;
-      box-shadow:0 10px 24px rgba(41,112,255,.28);
-    }
-
-    .brand h1{
-      font-size:1.1rem;
-      margin:0;
-      letter-spacing:.2px;
-    }
-
-    .brand p{
-      margin:3px 0 0;
-      color:var(--muted);
-      font-size:.78rem;
-    }
-
-    .secure-pill{
-      display:flex;
-      align-items:center;
-      gap:6px;
-      padding:8px 10px;
-      border-radius:999px;
-      background:rgba(25,195,125,.12);
-      color:#baf3d8;
-      border:1px solid rgba(25,195,125,.22);
-      font-size:.72rem;
-      white-space:nowrap;
-    }
-
-    .hero{
-      padding:8px 0 4px;
-    }
-
-    .hero-title{
-      font-size:1.28rem;
-      margin:0 0 6px;
-      line-height:1.25;
-    }
-
-    .hero-sub{
-      font-size:.9rem;
-      color:var(--muted);
-      margin:0;
-      line-height:1.45;
-    }
-
-    .content{
-      padding:16px;
-      background:linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,.02));
-    }
-
-    .screen{display:none; animation:fade .28s ease}
-    .screen.active{display:block}
-
-    @keyframes fade{
-      from{opacity:0; transform:translateY(8px)}
-      to{opacity:1; transform:translateY(0)}
-    }
-
-    .card{
-      background:linear-gradient(180deg,var(--card),var(--card-2));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:16px;
-      margin-bottom:14px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-    }
-
-    .card-title{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:14px;
-    }
-
-    .card-title h2{
-      font-size:1rem;
-      margin:0;
-    }
-
-    .card-title span{
-      font-size:.75rem;
-      color:var(--muted);
-    }
-
-    .mini-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .metric{
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px 10px;
-    }
-
-    .metric .k{
-      color:var(--muted);
-      font-size:.72rem;
-      margin-bottom:6px;
-    }
-
-    .metric .v{
-      font-size:.88rem;
-      font-weight:700;
-    }
-
-    .input-group{
-      margin-bottom:14px;
-    }
-
-    .input-group label{
-      display:block;
-      font-size:.82rem;
-      color:var(--muted);
-      margin-bottom:7px;
-    }
-
-    .input{
-      width:100%;
-      border:none;
-      outline:none;
-      background:#09111f;
-      color:var(--text);
-      border:1px solid #24324b;
-      border-radius:14px;
-      padding:15px 14px;
-      font-size:1rem;
-    }
-
-    .input:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 4px rgba(91,167,255,.08);
-    }
-
-    .btn{
-      width:100%;
-      border:none;
-      border-radius:16px;
-      padding:15px 16px;
-      color:#fff;
-      cursor:pointer;
-      font-weight:800;
-      font-size:.96rem;
-      letter-spacing:.2px;
-      transition:transform .12s ease, opacity .12s ease;
-      margin-bottom:10px;
-    }
-
-    .btn:active{transform:scale(.99)}
-    .btn.primary{background:linear-gradient(135deg,var(--primary-2),var(--primary))}
-    .btn.success{background:linear-gradient(135deg,#0fa968,var(--success))}
-    .btn.secondary{background:#324055}
-    .btn.ghost{background:transparent;border:1px solid #334155;color:#dbe7ff}
-    .btn.danger{background:linear-gradient(135deg,#b91c1c,var(--danger))}
-
-    .split{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .row{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:14px;
-      padding:10px 0;
-      border-bottom:1px solid var(--line);
-    }
-
-    .row:last-child{border-bottom:none}
-
-    .label{
-      color:var(--muted);
-      font-size:.82rem;
-      min-width:100px;
-    }
-
-    .value{
-      text-align:right;
-      font-size:.9rem;
-      font-weight:600;
-      color:var(--text);
-      line-height:1.35;
-      word-break:break-word;
-    }
-
-    .status-line{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      color:#c5f5df;
-      font-size:.86rem;
-      font-weight:700;
-      margin-top:4px;
-    }
-
-    .dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background:var(--success);
-      box-shadow:0 0 0 4px rgba(25,195,125,.16);
-    }
-
-    .journey{
-      display:grid;
-      gap:10px;
-      margin-top:6px;
-    }
-
-    .step{
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-      padding:12px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.025);
-    }
-
-    .step-badge{
-      width:30px;
-      height:30px;
-      border-radius:10px;
-      display:grid;
-      place-items:center;
-      font-size:.82rem;
-      font-weight:800;
-      background:#0c1526;
-      color:#9cc7ff;
-      border:1px solid #24406b;
-      flex:0 0 auto;
-    }
-
-    .step.done .step-badge{
-      background:rgba(25,195,125,.12);
-      color:#baf3d8;
-      border-color:rgba(25,195,125,.24);
-    }
-
-    .step h3{
-      margin:0 0 4px;
-      font-size:.9rem;
-    }
-
-    .step p{
-      margin:0;
-      color:var(--muted);
-      font-size:.79rem;
-      line-height:1.4;
-    }
-
-    .progress-wrap{
-      margin-top:12px;
-    }
-
-    .progress-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:8px;
-      font-size:.8rem;
-      color:var(--muted);
-    }
-
-    .progress{
-      height:10px;
-      background:#0b1322;
-      border-radius:999px;
-      overflow:hidden;
-      border:1px solid #22314a;
-    }
-
-    .progress-bar{
-      width:0%;
-      height:100%;
-      background:linear-gradient(90deg,var(--primary),var(--success));
-      border-radius:999px;
-      transition:width .55s ease;
-    }
-
-    .map{
-      position:relative;
-      height:150px;
-      border-radius:18px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px) 0 0/28px 28px,
-        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px) 0 0/28px 28px,
-        linear-gradient(180deg, #0f1b30, #0a1221);
-    }
-
-    .road{
-      position:absolute;
-      background:rgba(255,255,255,.08);
-      border-radius:999px;
-    }
-
-    .road.r1{width:180px;height:10px;left:18px;top:50px;transform:rotate(8deg)}
-    .road.r2{width:10px;height:120px;right:92px;top:14px}
-    .road.r3{width:120px;height:10px;right:20px;bottom:36px}
-    .pin{
-      position:absolute;
-      width:18px;height:18px;border-radius:50%;
-      background:var(--danger);
-      border:3px solid #fff;
-      box-shadow:0 8px 18px rgba(239,68,68,.4);
-      right:76px; top:52px;
-    }
-    .truck{
-      position:absolute;
-      left:54px; top:88px;
-      font-size:1.1rem;
-      filter:drop-shadow(0 6px 12px rgba(0,0,0,.35));
-    }
-
-    .chip-row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-
-    .chip{
-      padding:8px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      font-size:.72rem;
-      color:#dce8ff;
-    }
-
-    .certificate{
-      background:
-        radial-gradient(circle at top right, rgba(91,167,255,.14), transparent 28%),
-        radial-gradient(circle at bottom left, rgba(25,195,125,.10), transparent 30%),
-        linear-gradient(180deg,#0f1a2c,#14243d);
-      border-radius:22px;
-      padding:18px;
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .cert-top{
-      display:flex;
-      justify-content:space-between;
-      gap:14px;
-      align-items:flex-start;
-      margin-bottom:14px;
-    }
-
-    .seal{
-      padding:10px 12px;
-      border-radius:16px;
-      background:rgba(25,195,125,.12);
-      border:1px solid rgba(25,195,125,.24);
-      color:#baf3d8;
-      font-size:.75rem;
-      font-weight:800;
-      white-space:nowrap;
-    }
-
-    .cert-title{
-      font-size:1.06rem;
-      margin:0 0 4px;
-    }
-
-    .cert-sub{
-      margin:0;
-      color:var(--muted);
-      font-size:.82rem;
-    }
-
-    .qr-wrap{
-      margin-top:16px;
-      display:grid;
-      grid-template-columns:100px 1fr;
-      gap:14px;
-      align-items:center;
-    }
-
-    .qr{
-      width:100px;
-      height:100px;
-      border-radius:12px;
-      background:
-        linear-gradient(90deg,#fff 10px,transparent 10px) 0 0/20px 20px,
-        linear-gradient(#fff 10px,transparent 10px) 0 0/20px 20px,
-        linear-gradient(90deg,transparent 10px,#fff 10px) 10px 10px/20px 20px,
-        linear-gradient(transparent 10px,#fff 10px) 10px 10px/20px 20px,
-        #0a1220;
-      border:8px solid #fff;
-      box-shadow:0 8px 18px rgba(0,0,0,.28);
-    }
-
-    .hash-box{
-      padding:12px;
-      border-radius:16px;
-      background:#09111f;
-      border:1px solid #24324b;
-      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-      font-size:.74rem;
-      line-height:1.45;
-      color:#8ac4ff;
-      word-break:break-all;
-    }
-
-    .foot-note{
-      color:var(--muted);
-      font-size:.74rem;
-      line-height:1.45;
-      margin-top:12px;
-    }
-
-    .divider{
-      height:1px;
-      background:var(--line);
-      margin:14px 0;
-    }
-
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:22px;
-      transform:translateX(-50%) translateY(20px);
-      background:#09111f;
-      color:#fff;
-      border:1px solid #28405f;
-      border-radius:14px;
-      padding:12px 14px;
-      font-size:.86rem;
-      box-shadow:var(--shadow);
-      opacity:0;
-      pointer-events:none;
-      transition:all .28s ease;
-      z-index:999;
-      max-width:90vw;
-      text-align:center;
-    }
-
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(0);
-    }
-
-    .subtle{
-      color:var(--muted);
-      font-size:.78rem;
-      line-height:1.45;
-    }
-
-    .badge{
-      padding:6px 9px;
-      border-radius:999px;
-      font-size:.7rem;
-      font-weight:700;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:#dce8ff;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FraudLock Delivery — Certificação</title>
+
+<style>
+body {
+  background: linear-gradient(180deg,#020617,#0f172a);
+  color:#fff;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  margin:0;
+  padding:16px;
+}
+
+.container { max-width:420px; margin:auto; }
+
+.header {
+  text-align:center;
+  margin-bottom:20px;
+}
+.header h1 { color:#60a5fa; margin:0; }
+.header p { color:#94a3b8; font-size:0.9rem; }
+
+.card {
+  background:#1e293b;
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+input {
+  width:100%;
+  padding:14px;
+  margin-top:6px;
+  margin-bottom:14px;
+  border-radius:10px;
+  border:1px solid #334155;
+  background:#020617;
+  color:#fff;
+}
+
+button {
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  margin-bottom:10px;
+  cursor:pointer;
+}
+
+.primary { background:#2563eb; }
+.success { background:#059669; }
+.danger { background:#dc2626; }
+.gray { background:#475569; }
+
+.hidden { display:none; }
+
+.info {
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid #334155;
+  font-size:0.9rem;
+}
+
+.hash {
+  font-family:monospace;
+  font-size:0.75rem;
+  word-break:break-all;
+  background:#020617;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #334155;
+  color:#60a5fa;
+}
+
+.status {
+  color:#10b981;
+  font-weight:bold;
+}
+
+.loader {
+  text-align:center;
+  padding:20px;
+}
+
+.qr {
+  background:#fff;
+  height:120px;
+  border-radius:8px;
+  margin:10px auto;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="phone">
-      <div class="topbar">
-        <div class="brand-row">
-          <div class="brand">
-            <div class="logo">FL</div>
-            <div>
-              <h1>FraudLock Delivery Proof</h1>
-              <p>Certificação visual de entrega com evidência operacional</p>
-            </div>
-          </div>
-          <div class="secure-pill">● sessão protegida</div>
-        </div>
-
-        <div class="hero">
-          <h2 class="hero-title" id="hero-title">Comprovante inteligente para logística e marketplace</h2>
-          <p class="hero-sub" id="hero-sub">Demonstração executiva da jornada do entregador, validação operacional e emissão de evidência criptográfica.</p>
-        </div>
-      </div>
-
-      <div class="content">
-        <!-- LOGIN -->
-        <section class="screen active" id="screen-login">
-          <div class="card">
-            <div class="card-title">
-              <h2>Acesso do entregador</h2>
-              <span>Etapa 1 de 4</span>
-            </div>
-
-            <div class="input-group">
-              <label>CPF do operador</label>
-              <input class="input" id="cpf" type="text" maxlength="11" inputmode="numeric" placeholder="00000000000">
-            </div>
-
-            <div class="input-group">
-              <label>Celular vinculado</label>
-              <input class="input" id="celular" type="tel" maxlength="11" inputmode="numeric" placeholder="11999999999">
-            </div>
-
-            <button class="btn primary" onclick="fazerLogin()">Entrar na sessão segura</button>
-
-            <div class="mini-grid">
-              <div class="metric">
-                <div class="k">Integridade</div>
-                <div class="v">Ativa</div>
-              </div>
-              <div class="metric">
-                <div class="k">Auditoria</div>
-                <div class="v">Pronta</div>
-              </div>
-              <div class="metric">
-                <div class="k">Modo</div>
-                <div class="v">Demo Pro</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              <h2>O que será demonstrado</h2>
-              <span>Visão da reunião</span>
-            </div>
-
-            <div class="journey">
-              <div class="step">
-                <div class="step-badge">1</div>
-                <div>
-                  <h3>Identificação do operador</h3>
-                  <p>Simulação de acesso seguro para iniciar a jornada de prova de entrega.</p>
-                </div>
-              </div>
-              <div class="step">
-                <div class="step-badge">2</div>
-                <div>
-                  <h3>Atribuição da entrega</h3>
-                  <p>Vinculação de pedido, endereço, horário e coordenadas operacionais.</p>
-                </div>
-              </div>
-              <div class="step">
-                <div class="step-badge">3</div>
-                <div>
-                  <h3>Certificação do evento</h3>
-                  <p>Geração de identificador criptográfico e estrutura de evidência.</p>
-                </div>
-              </div>
-              <div class="step">
-                <div class="step-badge">4</div>
-                <div>
-                  <h3>Compartilhamento do comprovante</h3>
-                  <p>Resumo pronto para WhatsApp, cliente, operador logístico ou marketplace.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- DASHBOARD -->
-        <section class="screen" id="screen-dashboard">
-          <div class="card">
-            <div class="card-title">
-              <h2>Sessão segura ativa</h2>
-              <span>Etapa 2 de 4</span>
-            </div>
-
-            <div class="status-line">
-              <div class="dot"></div>
-              Proteção operacional habilitada
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="row">
-              <div class="label">Entregador</div>
-              <div class="value" id="dash-entregador">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Canal</div>
-              <div class="value">Operação móvel</div>
-            </div>
-            <div class="row">
-              <div class="label">Sincronização</div>
-              <div class="value">Pronta para evidência</div>
-            </div>
-
-            <div class="chip-row">
-              <div class="chip">Identidade carregada</div>
-              <div class="chip">Jornada auditável</div>
-              <div class="chip">Comprovante compartilhável</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              <h2>Painel do operador</h2>
-              <span>Demo executiva</span>
-            </div>
-
-            <div class="mini-grid">
-              <div class="metric">
-                <div class="k">Turno</div>
-                <div class="v">Ativo</div>
-              </div>
-              <div class="metric">
-                <div class="k">Entrega</div>
-                <div class="v">Pendente</div>
-              </div>
-              <div class="metric">
-                <div class="k">Validação</div>
-                <div class="v">Aguardando</div>
-              </div>
-            </div>
-          </div>
-
-          <button class="btn success" onclick="iniciarEntrega()">Iniciar jornada de entrega</button>
-          <button class="btn ghost" onclick="fazerLogout()">Encerrar sessão</button>
-        </section>
-
-        <!-- ENTREGA -->
-        <section class="screen" id="screen-delivery">
-          <div class="card">
-            <div class="card-title">
-              <h2>Entrega em andamento</h2>
-              <span>Etapa 3 de 4</span>
-            </div>
-
-            <div class="map">
-              <div class="road r1"></div>
-              <div class="road r2"></div>
-              <div class="road r3"></div>
-              <div class="truck">🚚</div>
-              <div class="pin"></div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="row">
-              <div class="label">Pedido</div>
-              <div class="value" id="info-pedido">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Destinatário</div>
-              <div class="value" id="info-cliente">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Endereço</div>
-              <div class="value" id="info-endereco">-</div>
-            </div>
-            <div class="row">
-              <div class="label">GPS</div>
-              <div class="value" id="info-gps">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Horário</div>
-              <div class="value" id="info-hora">-</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              <h2>Pipeline de certificação</h2>
-              <span id="progress-text">Pronto para iniciar</span>
-            </div>
-
-            <div class="journey">
-              <div class="step" id="step-1">
-                <div class="step-badge">1</div>
-                <div>
-                  <h3>Evento logístico carregado</h3>
-                  <p>Pedido, destino e operador foram vinculados à ocorrência.</p>
-                </div>
-              </div>
-              <div class="step" id="step-2">
-                <div class="step-badge">2</div>
-                <div>
-                  <h3>Localização associada</h3>
-                  <p>Coordenadas e momento operacional incluídos na evidência.</p>
-                </div>
-              </div>
-              <div class="step" id="step-3">
-                <div class="step-badge">3</div>
-                <div>
-                  <h3>Integridade consolidada</h3>
-                  <p>Identificador criptográfico da sessão preparado para exibição.</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="progress-wrap">
-              <div class="progress-head">
-                <span>Progresso de certificação</span>
-                <span id="progress-percentage">0%</span>
-              </div>
-              <div class="progress">
-                <div class="progress-bar" id="progress-bar"></div>
-              </div>
-            </div>
-          </div>
-
-          <button class="btn primary" onclick="gerarCertificado()">Certificar entrega</button>
-          <div class="split">
-            <button class="btn secondary" onclick="voltarDashboard()">Voltar</button>
-            <button class="btn ghost" onclick="reiniciarEntrega()">Recarregar dados</button>
-          </div>
-        </section>
-
-        <!-- CERTIFICADO -->
-        <section class="screen" id="screen-certificate">
-          <div class="certificate">
-            <div class="cert-top">
-              <div>
-                <h2 class="cert-title">Entrega validada com evidência operacional</h2>
-                <p class="cert-sub">Resumo executivo do evento logístico certificado</p>
-              </div>
-              <div class="seal">integridade confirmada</div>
-            </div>
-
-            <div class="row">
-              <div class="label">Certificado</div>
-              <div class="value" id="cert-id">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Pedido</div>
-              <div class="value" id="cert-pedido">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Cliente</div>
-              <div class="value" id="cert-cliente">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Endereço</div>
-              <div class="value" id="cert-endereco">-</div>
-            </div>
-            <div class="row">
-              <div class="label">GPS</div>
-              <div class="value" id="cert-gps">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Horário</div>
-              <div class="value" id="cert-hora">-</div>
-            </div>
-            <div class="row">
-              <div class="label">Operador</div>
-              <div class="value" id="cert-entregador">-</div>
-            </div>
-
-            <div class="qr-wrap">
-              <div class="qr" aria-hidden="true"></div>
-              <div>
-                <div class="badge">ID criptográfico do evento</div>
-                <div style="height:8px"></div>
-                <div class="hash-box" id="hash-resultado">-</div>
-              </div>
-            </div>
-
-            <p class="foot-note">
-              Este ambiente demonstra a jornada visual do comprovante de entrega com identificador criptográfico, pronto para apresentação comercial, técnica ou institucional.
-            </p>
-          </div>
-
-          <div class="card" style="margin-top:14px">
-            <div class="card-title">
-              <h2>Status de evidência</h2>
-              <span>Etapa 4 de 4</span>
-            </div>
-
-            <div class="mini-grid">
-              <div class="metric">
-                <div class="k">Integridade</div>
-                <div class="v">Confirmada</div>
-              </div>
-              <div class="metric">
-                <div class="k">Auditoria</div>
-                <div class="v">Pronta</div>
-              </div>
-              <div class="metric">
-                <div class="k">Compartilhar</div>
-                <div class="v">Liberado</div>
-              </div>
-            </div>
-          </div>
-
-          <button class="btn primary" onclick="compartilharCertificado()">Compartilhar comprovante</button>
-          <div class="split">
-            <button class="btn success" onclick="novaEntrega()">Nova entrega</button>
-            <button class="btn secondary" onclick="voltarDashboard()">Voltar ao início</button>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
-
-  <script>
-    let dadosEntrega = {};
-    let entregadorNome = '';
-    let certificadoId = '';
-
-    function $(id){
-      return document.getElementById(id);
-    }
-
-    function showToast(texto){
-      const toast = $('toast');
-      toast.textContent = texto;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2200);
-    }
-
-    function mostrarTela(id){
-      document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-      });
-      $(id).classList.add('active');
-
-      const heroTitle = $('hero-title');
-      const heroSub = $('hero-sub');
-
-      if(id === 'screen-login'){
-        heroTitle.textContent = 'Comprovante inteligente para logística e marketplace';
-        heroSub.textContent = 'Demonstração executiva da jornada do entregador, validação operacional e emissão de evidência criptográfica.';
-      } else if(id === 'screen-dashboard'){
-        heroTitle.textContent = 'Painel do operador pronto para nova ocorrência';
-        heroSub.textContent = 'A sessão permanece ativa para iniciar a jornada de entrega e preparar a prova operacional.';
-      } else if(id === 'screen-delivery'){
-        heroTitle.textContent = 'Evento logístico em processamento';
-        heroSub.textContent = 'Pedido, destino e contexto operacional organizados para a certificação da entrega.';
-      } else if(id === 'screen-certificate'){
-        heroTitle.textContent = 'Evidência gerada para apresentação e compartilhamento';
-        heroSub.textContent = 'A entrega foi consolidada em um comprovante visual com identificador criptográfico demonstrativo.';
-      }
-    }
-
-    function limparNumeros(valor){
-      return valor.replace(/\D/g, '');
-    }
-
-    function fazerLogin(){
-      const cpf = limparNumeros($('cpf').value);
-      const celular = limparNumeros($('celular').value);
-
-      if(cpf.length < 11 || celular.length < 10){
-        showToast('Preencha CPF e celular com números válidos.');
-        return;
-      }
-
-      entregadorNome = 'Operador ' + cpf.slice(0, 3) + '.' + cpf.slice(3, 6);
-      $('dash-entregador').textContent = entregadorNome;
-      mostrarTela('screen-dashboard');
-      showToast('Sessão segura iniciada.');
-    }
-
-    function iniciarEntrega(){
-      const pedidos = ['ML-48192','ML-73418','ML-26504','ML-90271','ML-61538'];
-      const clientes = ['Cliente Premium','Cliente Residencial','Comprador Verificado','Conta Corporativa','Cliente Final'];
-      const enderecos = [
-        'Av. Paulista, 1578 — Bela Vista',
-        'Rua Oscar Freire, 439 — Jardins',
-        'Rua Funchal, 418 — Vila Olímpia',
-        'Alameda Santos, 1293 — Paraíso',
-        'Rua Harmonia, 221 — Vila Madalena'
-      ];
-
-      const pedido = pedidos[Math.floor(Math.random() * pedidos.length)];
-      const cliente = clientes[Math.floor(Math.random() * clientes.length)];
-      const endereco = enderecos[Math.floor(Math.random() * enderecos.length)];
-      const gps = gerarGPSSimulado();
-      const agora = new Date();
-      const hora = agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-      const data = agora.toLocaleDateString('pt-BR');
-
-      dadosEntrega = { pedido, cliente, endereco, gps, hora, data };
-
-      $('info-pedido').textContent = pedido;
-      $('info-cliente').textContent = cliente;
-      $('info-endereco').textContent = endereco;
-      $('info-gps').textContent = gps.lat + ', ' + gps.lng;
-      $('info-hora').textContent = data + ' • ' + hora;
-
-      resetProgress();
-      marcarStep(1);
-
-      mostrarTela('screen-delivery');
-      showToast('Ocorrência logística carregada.');
-    }
-
-    function reiniciarEntrega(){
-      iniciarEntrega();
-      showToast('Dados da entrega recarregados.');
-    }
-
-    function resetProgress(){
-      $('progress-bar').style.width = '0%';
-      $('progress-percentage').textContent = '0%';
-      $('progress-text').textContent = 'Pronto para iniciar';
-      ['step-1','step-2','step-3'].forEach(id => $(id).classList.remove('done'));
-    }
-
-    function marcarStep(numero){
-      const step = $('step-' + numero);
-      if(step) step.classList.add('done');
-    }
-
-    function atualizarProgresso(valor, texto){
-      $('progress-bar').style.width = valor + '%';
-      $('progress-percentage').textContent = valor + '%';
-      $('progress-text').textContent = texto;
-    }
-
-    function gerarCertificado(){
-      if(!dadosEntrega.pedido){
-        showToast('Inicie uma entrega antes de certificar.');
-        return;
-      }
-
-      marcarStep(1);
-      atualizarProgresso(34, 'Associando contexto operacional');
-
-      setTimeout(() => {
-        marcarStep(2);
-        atualizarProgresso(68, 'Consolidando localização e momento do evento');
-      }, 350);
-
-      setTimeout(() => {
-        marcarStep(3);
-        atualizarProgresso(100, 'Identificador criptográfico gerado');
-      }, 700);
-
-      setTimeout(() => {
-        const hash = gerarHashSovereign();
-        certificadoId = gerarIdCertificado();
-
-        $('cert-id').textContent = certificadoId;
-        $('cert-pedido').textContent = dadosEntrega.pedido;
-        $('cert-cliente').textContent = dadosEntrega.cliente;
-        $('cert-endereco').textContent = dadosEntrega.endereco;
-        $('cert-gps').textContent = dadosEntrega.gps.lat + ', ' + dadosEntrega.gps.lng;
-        $('cert-hora').textContent = dadosEntrega.data + ' • ' + dadosEntrega.hora;
-        $('cert-entregador').textContent = entregadorNome || 'Operador ativo';
-        $('hash-resultado').textContent = hash;
-
-        mostrarTela('screen-certificate');
-        showToast('Entrega certificada com sucesso.');
-      }, 1050);
-    }
-
-    function gerarHashSovereign(){
-      const chars = 'abcdef0123456789';
-      let bloco1 = '';
-      let bloco2 = '';
-      let bloco3 = '';
-      let bloco4 = '';
-
-      for(let i = 0; i < 12; i++) bloco1 += chars[Math.floor(Math.random() * chars.length)];
-      for(let i = 0; i < 12; i++) bloco2 += chars[Math.floor(Math.random() * chars.length)];
-      for(let i = 0; i < 12; i++) bloco3 += chars[Math.floor(Math.random() * chars.length)];
-      for(let i = 0; i < 12; i++) bloco4 += chars[Math.floor(Math.random() * chars.length)];
-
-      return 'FLX-' + bloco1 + '-' + bloco2 + '-' + bloco3 + '-' + bloco4;
-    }
-
-    function gerarIdCertificado(){
-      const n = Math.floor(Math.random() * 900000 + 100000);
-      return 'CERT-' + new Date().getFullYear() + '-' + n;
-    }
-
-    function gerarGPSSimulado(){
-      return {
-        lat: (-23.5505 + ((Math.random() - 0.5) * 0.04)).toFixed(5),
-        lng: (-46.6333 + ((Math.random() - 0.5) * 0.04)).toFixed(5)
-      };
-    }
-
-    function compartilharCertificado(){
-      const texto =
-`🛡️ FraudLock Delivery Proof
-Certificado: ${certificadoId}
-Pedido: ${dadosEntrega.pedido}
-Cliente: ${dadosEntrega.cliente}
-Endereço: ${dadosEntrega.endereco}
-GPS: ${dadosEntrega.gps.lat}, ${dadosEntrega.gps.lng}
-Horário: ${dadosEntrega.data} • ${dadosEntrega.hora}
-Operador: ${entregadorNome}
-ID Criptográfico: ${$('hash-resultado').textContent}`;
-
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(texto).then(() => {
-          showToast('Comprovante copiado para compartilhar.');
-        }).catch(() => {
-          fallbackCopy(texto);
-        });
-      } else {
-        fallbackCopy(texto);
-      }
-    }
-
-    function fallbackCopy(texto){
-      const area = document.createElement('textarea');
-      area.value = texto;
-      document.body.appendChild(area);
-      area.select();
-      try{
-        document.execCommand('copy');
-        showToast('Comprovante copiado.');
-      }catch(e){
-        showToast('Não foi possível copiar automaticamente.');
-      }
-      document.body.removeChild(area);
-    }
-
-    function novaEntrega(){
-      iniciarEntrega();
-      showToast('Nova entrega preparada.');
-    }
-
-    function voltarDashboard(){
-      mostrarTela('screen-dashboard');
-    }
-
-    function fazerLogout(){
-      $('cpf').value = '';
-      $('celular').value = '';
-      dadosEntrega = {};
-      entregadorNome = '';
-      certificadoId = '';
-      $('dash-entregador').textContent = '-';
-      mostrarTela('screen-login');
-      showToast('Sessão encerrada.');
-    }
-  </script>
+
+<div class="container">
+
+<div class="header">
+<h1>🛡️ FraudLock</h1>
+<p>Certificação antifraude de entregas</p>
+</div>
+
+<!-- LOGIN -->
+<div id="login">
+<div class="card">
+<label>CPF</label>
+<input id="cpf">
+
+<label>Celular</label>
+<input id="celular">
+
+<button class="primary" onclick="login()">Entrar com Sessão Segura</button>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+<div class="card">
+<div class="info"><span>Status</span><span class="status">Proteção Ativa</span></div>
+<div class="info"><span>Entregador</span><span id="nome"></span></div>
+</div>
+
+<button class="success" onclick="novaEntrega()">🚀 Iniciar Entrega</button>
+<button class="danger" onclick="logout()">Sair</button>
+</div>
+
+<!-- ENTREGA -->
+<div id="entrega" class="hidden">
+<div class="card">
+<div class="info"><span>Pedido</span><span id="pedido"></span></div>
+<div class="info"><span>Local</span><span id="gps"></span></div>
+<div class="info"><span>Hora</span><span id="hora"></span></div>
+</div>
+
+<button class="primary" onclick="validar()">🛡️ Validar Entrega</button>
+<button class="gray" onclick="voltar()">Voltar</button>
+</div>
+
+<!-- PROCESSANDO -->
+<div id="processando" class="hidden">
+<div class="card loader">
+<h3>Validando integridade...</h3>
+<p>Gerando evidência criptográfica</p>
+</div>
+</div>
+
+<!-- CERTIFICADO -->
+<div id="certificado" class="hidden">
+
+<div class="card">
+<h3 style="text-align:center;">Entrega Certificada</h3>
+
+<div class="info"><span>Pedido</span><span id="c-pedido"></span></div>
+<div class="info"><span>GPS</span><span id="c-gps"></span></div>
+<div class="info"><span>Hora</span><span id="c-hora"></span></div>
+<div class="info"><span>Status</span><span class="status">Auditável</span></div>
+
+</div>
+
+<div class="card">
+<div class="qr"></div>
+<div class="hash" id="hash"></div>
+</div>
+
+<button class="primary" onclick="copiar()">📤 Compartilhar</button>
+<button class="success" onclick="novaEntrega()">Nova Entrega</button>
+
+</div>
+
+</div>
+
+<script>
+
+let entrega = {}
+
+function mostrar(id){
+document.querySelectorAll('.container > div').forEach(d=>d.classList.add('hidden'))
+document.getElementById(id).classList.remove('hidden')
+}
+
+function login(){
+let cpf = document.getElementById('cpf').value
+if(cpf.length<3){ alert("CPF inválido"); return }
+
+document.getElementById('nome').innerText = "ID-"+cpf.slice(0,3)
+mostrar('dashboard')
+}
+
+function novaEntrega(){
+entrega = {
+pedido: "FL-"+Math.floor(Math.random()*90000),
+gps: gerarGPS(),
+hora: new Date().toLocaleTimeString()
+}
+
+document.getElementById('pedido').innerText = entrega.pedido
+document.getElementById('gps').innerText = entrega.gps
+document.getElementById('hora').innerText = entrega.hora
+
+mostrar('entrega')
+}
+
+function validar(){
+mostrar('processando')
+
+setTimeout(()=>{
+gerarCertificado()
+},2000)
+}
+
+function gerarCertificado(){
+
+let hash = gerarHash()
+
+document.getElementById('c-pedido').innerText = entrega.pedido
+document.getElementById('c-gps').innerText = entrega.gps
+document.getElementById('c-hora').innerText = entrega.hora
+document.getElementById('hash').innerText = hash
+
+mostrar('certificado')
+}
+
+function gerarHash(){
+let chars='abcdef0123456789'
+let h='FLX-'
+for(let i=0;i<40;i++) h+=chars[Math.floor(Math.random()*chars.length)]
+return h
+}
+
+function gerarGPS(){
+let lat = (-23.55 - Math.random()/100).toFixed(5)
+let lng = (-46.63 - Math.random()/100).toFixed(5)
+return lat+", "+lng
+}
+
+function copiar(){
+let txt = document.getElementById('hash').innerText
+navigator.clipboard.writeText(txt)
+alert("Certificado copiado")
+}
+
+function voltar(){ mostrar('dashboard') }
+function logout(){ mostrar('login') }
+
+</script>
+
 </body>
 </html>
