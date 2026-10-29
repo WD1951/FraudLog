@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FraudLog — Termo de aceite e privacidade</title>
+<!--
+  TERMO DE ACEITE DO MOTOBOY — versão 1.0 — 29/10/2026
+  ANTES DE PUBLICAR, troque os três campos entre colchetes:
+    [NOME DA SUA EMPRESA]  [CNPJ]  [E-MAIL DE CONTATO]
+  Leve este texto ao advogado de LGPD. Pontos a confirmar com ele:
+    - prazo de guarda de 5 anos;
+    - se a biometria pode ser obrigatória para o cadastro.
+  Ao aceitar, a página guarda versão e data no aparelho e, se a página
+  for aberta com ?retorno=ENDERECO, volta para esse endereço com
+  ?aceite=1.0&data=... — o servidor do FraudLog deve gravar esse aceite.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fundo: #F3F6F4;
+    --papel: #FFFFFF;
+    --tinta: #16211C;
+    --suave: #52615A;
+    --linha: #CFD8D3;
+    --verde: #0B7A4B;
+    --verde-luz: #19C27A;
+    --aviso: #FFF4C2;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fundo: #0C1310;
+      --papel: #131D18;
+      --tinta: #E6EEEA;
+      --suave: #9DB0A6;
+      --linha: #2A3A32;
+      --verde: #3DDC97;
+      --verde-luz: #3DDC97;
+      --aviso: #3A3415;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--tinta);
+    font-family: "Atkinson Hyperlegible", "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  }
+  main { max-width: 36rem; margin: 0 auto; padding: 1.5rem 1.25rem 2rem; }
+  header { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.5rem; }
+  .selo {
+    width: 3.25rem; height: 3.25rem; flex: none;
+    border-radius: 0.8rem;
+    background: var(--papel);
+    border: 2px solid var(--verde-luz);
+    box-shadow: 0 0 0.9rem color-mix(in srgb, var(--verde-luz) 45%, transparent);
+    display: grid; place-items: center;
+  }
+  .selo svg { width: 1.7rem; height: 1.7rem; }
+  .marca { font-weight: 700; font-size: 1.35rem; line-height: 1.1; margin: 0; }
+  .sub { margin: 0.15rem 0 0; color: var(--suave); font-size: 0.95rem; }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 0.5rem; }
+  .versao { color: var(--suave); font-size: 0.95rem; margin: 0 0 1.5rem; }
+  .resumo {
+    background: var(--papel);
+    border-left: 4px solid var(--verde);
+    padding: 1rem 1.1rem;
+    border-radius: 0 0.6rem 0.6rem 0;
+    margin-bottom: 1.75rem;
+  }
+  .resumo p { margin: 0; }
+  section { margin-bottom: 1.6rem; }
+  h2 { font-size: 1.2rem; margin: 0 0 0.4rem; }
+  p { margin: 0 0 0.6rem; }
+  ul { margin: 0; padding-left: 1.25rem; }
+  li { margin-bottom: 0.3rem; }
+  .preencher { background: var(--aviso); padding: 0 0.2rem; border-radius: 0.2rem; }
+  .aceites {
+    background: var(--papel);
+    border: 1px solid var(--linha);
+    border-radius: 0.8rem;
+    padding: 1.1rem;
+    margin-top: 2rem;
+  }
+  label {
+    display: flex; gap: 0.8rem; align-items: flex-start;
+    padding: 0.7rem 0; cursor: pointer;
+  }
+  label + label { border-top: 1px solid var(--linha); }
+  input[type="checkbox"] {
+    width: 1.6rem; height: 1.6rem; flex: none; margin-top: 0.1rem;
+    accent-color: var(--verde);
+  }
+  button {
+    width: 100%; margin-top: 1rem;
+    font: inherit; font-weight: 700; font-size: 1.15rem;
+    padding: 1rem; border: none; border-radius: 0.7rem;
+    background: var(--verde); color: var(--papel);
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--verde-luz); outline-offset: 3px; }
+  .confirmado { display: none; margin-top: 1rem; font-weight: 700; color: var(--verde); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="selo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--verde)">
+        <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        <circle cx="12" cy="15.5" r="1.4" fill="currentColor"></circle>
+      </svg>
+    </div>
+    <div>
+      <p class="marca">FraudLog</p>
+      <p class="sub">Comprovação digital de entregas</p>
+    </div>
+  </header>
+
+  <h1>Seus dados no FraudLog</h1>
+  <p class="versao">Termo versão 1.0, de 29 de outubro de 2026</p>
+
+  <div class="resumo">
+    <p>O FraudLog registra a retirada e a entrega para provar que você fez o seu trabalho. Os seus dados servem para proteger você e a empresa numa disputa. Não vendemos, não emprestamos e não usamos para outra coisa.</p>
+  </div>
+
+  <section>
+    <h2>Quais dados coletamos</h2>
+    <ul>
+      <li>Nome, CPF e WhatsApp, no cadastro.</li>
+      <li>Uma selfie e a sua digital, para confirmar que é você.</li>
+      <li>A placa da moto, a cada entrega.</li>
+      <li>A localização e o horário, na retirada e na entrega.</li>
+      <li>A foto da entrega, quando houver.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Quando usamos a sua localização</h2>
+    <p>Só no momento da retirada e no momento da entrega. O FraudLog não acompanha você durante o dia.</p>
+  </section>
+
+  <section>
+    <h2>Quem vê os seus dados</h2>
+    <p>A empresa em que você está credenciado vê só as entregas que fez para ela. Uma empresa não vê o que você fez para outra.</p>
+  </section>
+
+  <section>
+    <h2>Por quanto tempo guardamos</h2>
+    <p>Os registros de entrega ficam guardados por até 5 anos, porque é o tempo em que uma entrega ainda pode ser questionada. A selfie e a digital ficam guardadas só enquanto você estiver credenciado em alguma empresa. Depois disso, apagamos.</p>
+  </section>
+
+  <section>
+    <h2>Seus direitos</h2>
+    <p>Você pode, a qualquer momento, pedir para ver, corrigir ou apagar os seus dados. Basta escrever para <span class="preencher">[E-MAIL DE CONTATO]</span>. Alguns registros de entrega podem precisar ficar guardados até o fim do prazo, para proteger você numa disputa.</p>
+  </section>
+
+  <section>
+    <h2>Se algo der errado</h2>
+    <p>Protegemos os seus dados com criptografia e acesso restrito. Se houver qualquer incidente com eles, você será avisado.</p>
+  </section>
+
+  <section>
+    <h2>Quem é responsável</h2>
+    <p><span class="preencher">[NOME DA SUA EMPRESA]</span>, CNPJ <span class="preencher">[CNPJ]</span>, São Paulo.</p>
+  </section>
+
+  <div class="aceites">
+    <label>
+      <input type="checkbox" id="termo">
+      <span>Li e aceito o uso dos meus dados como explicado acima.</span>
+    </label>
+    <label>
+      <input type="checkbox" id="biometria">
+      <span>Autorizo o uso da minha selfie e da minha digital para confirmar a minha identidade nas entregas.</span>
+    </label>
+    <button id="aceitar" type="button" disabled>Aceitar e continuar</button>
+    <p class="confirmado" id="confirmado" role="status">Aceite registrado. Você já pode continuar o cadastro.</p>
+  </div>
+</main>
+
+<script>
+  const VERSAO = "1.0";
+  const termo = document.getElementById("termo");
+  const biometria = document.getElementById("biometria");
+  const botao = document.getElementById("aceitar");
+  const confirmado = document.getElementById("confirmado");
+
+  function atualizar() {
+    botao.disabled = !(termo.checked && biometria.checked);
+  }
+  termo.addEventListener("change", atualizar);
+  biometria.addEventListener("change", atualizar);
+
+  botao.addEventListener("click", function () {
+    const data = new Date().toISOString();
+    try {
+      localStorage.setItem("fraudlog_aceite", JSON.stringify({ versao: VERSAO, data: data, biometria: true }));
+    } catch (e) {}
+    const retorno = new URLSearchParams(location.search).get("retorno");
+    if (retorno) {
+      const destino = new URL(retorno, location.href);
+      destino.searchParams.set("aceite", VERSAO);
+      destino.searchParams.set("data", data);
+      location.href = destino.toString();
+    } else {
+      confirmado.style.display = "block";
+      botao.disabled = true;
+    }
+  });
+</script>
+</body>
+</html>
